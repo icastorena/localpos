@@ -1,0 +1,48 @@
+# Java
+/target/
+/out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VSCode
+.vscode/
+
+# Node
+/frontend/localpos-web-app/node_modules/
+/frontend/localpos-web-app/dist/
+/frontend/localpos-web-app/build/
+
+/frontend/localpos-mobile-app/node_modules/
+/frontend/localpos-mobile-app/.expo/
+/frontend/localpos-mobile-app/android/build/
+/frontend/localpos-mobile-app/ios/Pods/
+/frontend/localpos-mobile-app/.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
