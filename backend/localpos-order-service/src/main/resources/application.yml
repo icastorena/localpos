@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: Order Service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/localpos_user_db
+    username: localpos_user
+    password: localpos_pass
