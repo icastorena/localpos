@@ -1,6 +1,6 @@
-# Java
-/target/
-/out/
+# Java build outputs
+**/target/
+**/out/
 *.class
 *.jar
 *.war
@@ -29,16 +29,16 @@ build/
 # VSCode
 .vscode/
 
-# Node
-/frontend/localpos-web-app/node_modules/
-/frontend/localpos-web-app/dist/
-/frontend/localpos-web-app/build/
+# Node (frontend)
+frontend/localpos-web-app/node_modules/
+frontend/localpos-web-app/dist/
+frontend/localpos-web-app/build/
 
-/frontend/localpos-mobile-app/node_modules/
-/frontend/localpos-mobile-app/.expo/
-/frontend/localpos-mobile-app/android/build/
-/frontend/localpos-mobile-app/ios/Pods/
-/frontend/localpos-mobile-app/.vscode/
+frontend/localpos-mobile-app/node_modules/
+frontend/localpos-mobile-app/.expo/
+frontend/localpos-mobile-app/android/build/
+frontend/localpos-mobile-app/ios/Pods/
+frontend/localpos-mobile-app/.vscode/
 
 # Logs
 *.log

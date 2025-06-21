@@ -10,10 +10,10 @@ INSERT INTO roles (name, description) VALUES
 
 -- USERS
 INSERT INTO users (username, password, email, created_at, updated_at) VALUES
-  ('admin', 'hashed_password_admin', 'admin@localpos.com', NOW(), NOW()),
-  ('cashier1', 'hashed_password_cashier1', 'cashier1@localpos.com', NOW(), NOW()),
-  ('manager1', 'hashed_password_manager1', 'manager1@localpos.com', NOW(), NOW()),
-  ('cashier2', 'hashed_password_cashier2', 'cashier2@localpos.com', NOW(), NOW());
+  ('admin', '$2a$12$EwviTfvLeBDC1qTW1E/E..QnXNhOXRFmBWmmJ1v/0MAGf9sY8bLDu', 'admin@localpos.com', NOW(), NOW()),
+  ('cashier1', '$2a$12$XrQ.dOKa02uEZEdUjHAbsuDNOKgZZx4aLoBfTobqv2/NzGO1ABiRu', 'cashier1@localpos.com', NOW(), NOW()),
+  ('manager1', '$2a$12$8y2MxUEQkP9cjyWw79OToOpza2TGJYNJiw2Cdkvn86sGRiK13VUXO', 'manager1@localpos.com', NOW(), NOW()),
+  ('cashier2', '$2a$12$XrQ.dOKa02uEZEdUjHAbsuDNOKgZZx4aLoBfTobqv2/NzGO1ABiRu', 'cashier2@localpos.com', NOW(), NOW());
 
 -- USER ROLES
 INSERT INTO user_roles (user_id, role_id) VALUES
