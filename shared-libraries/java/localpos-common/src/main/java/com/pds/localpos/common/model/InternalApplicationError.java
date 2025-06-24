@@ -11,5 +11,4 @@ public class InternalApplicationError {
     private String timestamp;
     private String errorCode;
     private String message;
-    private String details;
 }
