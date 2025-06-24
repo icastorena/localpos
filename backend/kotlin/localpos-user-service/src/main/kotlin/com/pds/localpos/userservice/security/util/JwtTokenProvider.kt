@@ -52,12 +52,16 @@ class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
             true
-        } catch (ex: JwtException) {
-            log.warn("Invalid JWT token: ${ex.message}")
-            false
-        } catch (ex: IllegalArgumentException) {
-            log.warn("Invalid JWT token: ${ex.message}")
-            false
+        } catch (ex: Exception) {
+            when (ex) {
+                is JwtException,
+                is IllegalArgumentException -> {
+                    log.warn("Invalid JWT token: ${ex.message}")
+                    false
+                }
+
+                else -> throw ex
+            }
         }
     }
 
