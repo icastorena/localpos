@@ -5,7 +5,6 @@ import com.pds.localpos.userservice.service.UserDetailsServiceProvider
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -19,7 +18,6 @@ class JwtAuthenticationFilter(
     companion object {
         private const val HEADER_STRING = "Authorization"
         private const val TOKEN_PREFIX = "Bearer "
-        private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
     }
 
     override fun doFilterInternal(
