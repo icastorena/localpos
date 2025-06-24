@@ -31,11 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if ("/auth/login".equals(request.getServletPath())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String header = request.getHeader(HEADER_STRING);
 
         if (header != null && header.startsWith(TOKEN_PREFIX)) {
@@ -43,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (tokenProvider.validateToken(token)) {
                 String username = tokenProvider.getUsernameFromToken(token);
+
                 UserDetails userDetails = userDetailsServiceProvider.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication =

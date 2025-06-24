@@ -12,11 +12,11 @@ public class ErrorMessageResolver {
 
     private final MessageSource messageSource;
 
-    public String resolveMessage(String code, Locale locale, String defaultMessage) {
+    public String resolveMessage(String code, Locale locale, Object... args) {
         try {
-            return messageSource.getMessage(code, null, locale);
+            return messageSource.getMessage(code, args, locale);
         } catch (Exception e) {
-            return defaultMessage;
+            return "Message resolve error";
         }
     }
 }

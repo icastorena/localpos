@@ -1,0 +1,24 @@
+-- ========================
+-- Drop All Tables (in order)
+-- ========================
+DROP TABLE IF EXISTS order_items CASCADE;
+
+DROP TABLE IF EXISTS orders CASCADE;
+
+DROP TABLE IF EXISTS inventory CASCADE;
+
+DROP TABLE IF EXISTS products CASCADE;
+
+DROP TABLE IF EXISTS categories CASCADE;
+
+DROP TABLE IF EXISTS user_stores CASCADE;
+
+DROP TABLE IF EXISTS stores CASCADE;
+
+DROP TABLE IF EXISTS user_roles CASCADE;
+
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP TABLE IF EXISTS roles CASCADE;
+
+DROP TABLE IF EXISTS sales_report CASCADE;

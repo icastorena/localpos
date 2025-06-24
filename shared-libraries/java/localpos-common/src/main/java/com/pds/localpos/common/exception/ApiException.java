@@ -1,16 +1,17 @@
 package com.pds.localpos.common.exception;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class ApiException extends RuntimeException {
 
-    private final String errorCode;
-    private final String messageCode;
+    private final HttpStatus status;
+    private final Object[] messageParams;
 
-    public ApiException(String errorCode, String messageCode, String message) {
+    public ApiException(HttpStatus status, String message, Object... messageParams) {
         super(message);
-        this.errorCode = errorCode;
-        this.messageCode = messageCode;
+        this.status = status;
+        this.messageParams = messageParams;
     }
 }
