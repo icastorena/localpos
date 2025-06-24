@@ -32,6 +32,7 @@ data class Store(
     @Column(name = "updated_at")
     var updatedAt: Instant? = null
 ) {
+
     @PrePersist
     fun onCreate() {
         val now = Instant.now()
