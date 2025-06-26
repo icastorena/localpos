@@ -8,56 +8,58 @@
 
 ```bash
 localpos/
-├── backend/
-│   ├── java/                          # Microservices (Spring Boot - Java)
-│   │   ├── localpos-user-service/
-│   │   ├── localpos-product-service/
-│   │   ├── localpos-order-service/
+├── backend/                           
+│   ├── java/                         # Java-based microservices
+│   │   ├── localpos-user-service/   
+│   │   ├── localpos-product-service/ 
+│   │   ├── localpos-order-service/  
 │   │   ├── localpos-inventory-service/
 │   │   └── localpos-reporting-service/
-│   └── kotlin/                        # Microservices (Spring Boot - Kotlin)
-│       ├── localpos-user-service/
-│       ├── localpos-product-service/
-│       ├── localpos-order-service/
-│       ├── localpos-inventory-service/
-│       └── localpos-reporting-service/
+│   └── kotlin/                       # Kotlin-based microservices
+│       ├── localpos-auth-service-kt/
+│       ├── localpos-user-service-kt/
+│       ├── localpos-product-service-kt/
+│       ├── localpos-order-service-kt/
+│       ├── localpos-inventory-service-kt/
+│       └── localpos-reporting-service-kt/
 │
-├── frontend/
-│   ├── localpos-web-app/             # Web frontend (TypeScript + React)
-│   └── localpos-mobile-app/          # Mobile app (React Native or PWA)
+├── frontend/                        # Web and Mobile frontends
+│   ├── localpos-web-app/            
+│   └── localpos-mobile-app/         
 │
-├── infrastructure/
-│   ├── docker/                       # Docker Compose, images and volumes
-│   └── nginx/                        # Reverse proxy, load balancing
-│
-├── shared-libraries/
+├── shared-libraries/                # Shared Java & Kotlin libs
 │   ├── java/
 │   │   ├── localpos-common/
 │   │   └── localpos-common-security/
 │   └── kotlin/
-│       ├── localpos-common/
-│       └── localpos-common-security/
+│       ├── localpos-common-kt/
+│       └── localpos-common-security-kt/
 │
-├── docs/
-│   ├── openapi/                      # OpenAPI/Swagger specs
-│   ├── diagrams/                     # System architecture diagrams
-│   └── manuals/                      # End-user and admin manuals
+├── infrastructure/                 # Docker, NGINX configs
+│   ├── docker/                     
+│   └── nginx/                      
 │
-├── scripts/                          # Utility scripts (setup, DB, deploy)
-└── README.md
+├── docs/                           # Documentation: API specs, diagrams, manuals
+│   ├── openapi/                    
+│   ├── diagrams/                   
+│   └── manuals/                    
+│
+├── scripts/                        # Utility scripts
+└── README.md                       # Project overview
 ```
 
 ---
 
 ## 🧩 Modules Overview
 
-| Microservice               | Description                                   | Java | Kotlin |
-|---------------------------|-----------------------------------------------|------|--------|
-| localpos-user-service     | User, roles, authentication                   | ✅   | ✅     |
-| localpos-product-service  | Product catalog, categories, pricing          | ✅   | ✅     |
-| localpos-order-service    | Sales, transactions, and receipts             | ✅   | ✅     |
-| localpos-inventory-service| Stock management, warehouse, adjustments      | ✅   | ✅     |
-| localpos-reporting-service| Reports, summaries, analytics                 | ✅   | ✅     |
+| Microservice               | Description                              | Java | Kotlin |
+| -------------------------- | ---------------------------------------- | ---- | ------ |
+| localpos-auth-service      | Authentication, JWT token management     | ❌    | ✅      |
+| localpos-user-service      | User, roles, authentication              | ✅    | ✅      |
+| localpos-product-service   | Product catalog, categories, pricing     | ✅    | ✅      |
+| localpos-order-service     | Sales, transactions, and receipts        | ✅    | ✅      |
+| localpos-inventory-service | Stock management, warehouse, adjustments | ✅    | ✅      |
+| localpos-reporting-service | Reports, summaries, analytics            | ✅    | ✅      |
 
 ---
 
