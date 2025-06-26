@@ -85,12 +85,12 @@
 
         <!-- Internal Common Libraries -->
         <dependency>
-            <groupId>com.localpos</groupId>
+            <groupId>com.pds</groupId>
             <artifactId>localpos-common</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.localpos</groupId>
+            <groupId>com.pds</groupId>
             <artifactId>localpos-common-security</artifactId>
             <version>1.0.0</version>
         </dependency>

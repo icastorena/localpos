@@ -1,12 +1,17 @@
 package com.pds.localpos.userservice.controller;
 
+import com.pds.localpos.userservice.dto.LoginRequest;
 import com.pds.localpos.userservice.dto.UserRequestDTO;
 import com.pds.localpos.userservice.dto.UserResponseDTO;
+import com.pds.localpos.userservice.mapper.UserMapper;
+import com.pds.localpos.userservice.model.User;
 import com.pds.localpos.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +27,9 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     @GetMapping
@@ -53,5 +60,15 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/auth/validate")
+    public ResponseEntity<UserResponseDTO> validateUser(@RequestBody LoginRequest request) {
+        User user = userService.findByUsername(request.username());
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+
+        return ResponseEntity.ok(UserMapper.toDTO(user));
     }
 }

@@ -23,5 +23,5 @@ app:
 
 security:
   jwt:
-    secret: I/O/UftKrK+1AyAVl0fg8g1Brqxvq5yO8g5mIULAa2M=
+    secret: ${JWT_SECRET}
     expiration-ms: 900000

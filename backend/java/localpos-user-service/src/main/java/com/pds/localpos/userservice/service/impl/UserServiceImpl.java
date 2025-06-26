@@ -130,6 +130,11 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     private Set<Role> fetchRolesByNames(Set<String> roleNames) {
         if (roleNames == null || roleNames.isEmpty()) {
             return Collections.emptySet();
