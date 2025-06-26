@@ -1,6 +1,6 @@
 package com.pds.localpos.userservice.controller;
 
-import com.pds.localpos.userservice.dto.LoginRequest;
+import com.pds.localpos.userservice.dto.LoginRequestDTO;
 import com.pds.localpos.userservice.dto.UserRequestDTO;
 import com.pds.localpos.userservice.dto.UserResponseDTO;
 import com.pds.localpos.userservice.mapper.UserMapper;
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/validate")
-    public ResponseEntity<UserResponseDTO> validateUser(@RequestBody LoginRequest request) {
+    public ResponseEntity<UserResponseDTO> validateUser(@RequestBody LoginRequestDTO request) {
         User user = userService.findByUsername(request.username());
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials");
