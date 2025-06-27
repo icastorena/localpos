@@ -1,6 +1,5 @@
-package com.pds.localpos.userservice.exception
+package com.pds.localpos.common.exception
 
-import com.pds.localpos.common.exception.ApiException
 import org.springframework.http.HttpStatus
 
 class ResourceNotFoundException(

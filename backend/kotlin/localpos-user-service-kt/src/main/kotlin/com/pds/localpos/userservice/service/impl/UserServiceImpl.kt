@@ -1,9 +1,9 @@
 package com.pds.localpos.userservice.service.impl
 
+import com.pds.localpos.common.exception.BusinessException
+import com.pds.localpos.common.exception.ResourceNotFoundException
 import com.pds.localpos.userservice.dto.UserRequestDTO
 import com.pds.localpos.userservice.dto.UserResponseDTO
-import com.pds.localpos.userservice.exception.BusinessException
-import com.pds.localpos.userservice.exception.ResourceNotFoundException
 import com.pds.localpos.userservice.mapper.toEntity
 import com.pds.localpos.userservice.mapper.toResponseDTO
 import com.pds.localpos.userservice.model.Role
