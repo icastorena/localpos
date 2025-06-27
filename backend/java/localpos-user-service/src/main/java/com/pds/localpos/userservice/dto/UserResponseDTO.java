@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Set;
 
 public record UserResponseDTO(
-        Long id,
+        String id,
         String username,
         String email,
         StoreDTO store,

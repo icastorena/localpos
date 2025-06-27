@@ -3,7 +3,7 @@ package com.pds.localpos.authservice.dto
 import java.time.Instant
 
 data class UserResponseDTO(
-    val id: Long,
+    val id: String,
     val username: String,
     val email: String,
     val store: StoreDTO?,

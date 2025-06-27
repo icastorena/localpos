@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Pattern
 
 data class UserRequestDTO(
+
     @field:NotBlank(message = "user.username.not_blank")
     val username: String,
 
@@ -20,9 +21,9 @@ data class UserRequestDTO(
     )
     val password: String,
 
-    @field:NotBlank(message = "user.storeCode.not_blank")
-    val storeCode: String,
+    @field:NotEmpty(message = "user.storeCodes.not_empty")
+    val storeCodes: Set<@NotBlank(message = "storeCode.not_blank") String>,
 
     @field:NotEmpty(message = "user.roleNames.not_empty")
-    val roleNames: Set<String>
+    val roleNames: Set<@NotBlank(message = "roleName.not_blank") String>
 )

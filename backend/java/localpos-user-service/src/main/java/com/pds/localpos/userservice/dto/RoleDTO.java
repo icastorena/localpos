@@ -1,7 +1,7 @@
 package com.pds.localpos.userservice.dto;
 
 public record RoleDTO(
-        Long id,
+        String id,
         String name,
         String description
 ) {

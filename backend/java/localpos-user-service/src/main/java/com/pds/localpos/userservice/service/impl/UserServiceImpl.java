@@ -44,24 +44,30 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(HttpStatus.CONFLICT, "user.email.exists");
         }
 
-        User user = UserMapper.toEntity(dto);
+        Set<Store> stores = new HashSet<>();
+        if (dto.storeCodes() != null && !dto.storeCodes().isEmpty()) {
+            stores = storeRepository.findByCodeIn(dto.storeCodes());
+            if (stores.size() != dto.storeCodes().size()) {
+                Set<String> foundCodes = stores.stream().map(Store::getCode).collect(Collectors.toSet());
+                Set<String> missingCodes = new HashSet<>(dto.storeCodes());
+                missingCodes.removeAll(foundCodes);
+                throw new BusinessException(
+                        HttpStatus.BAD_REQUEST,
+                        "stores.missing",
+                        String.join(", ", missingCodes)
+                );
+            }
+        }
 
-        Store store = storeRepository.findByCode(dto.storeCode())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        HttpStatus.NOT_FOUND,
-                        "store.not_found"
-                ));
-
-        Set<Role> roles = roleRepository.findByNameIn(dto.roleNames());
-        if (roles == null || roles.isEmpty()) {
+        Set<Role> roles = fetchRolesByNames(dto.roleNames());
+        if (roles.isEmpty()) {
             throw new BusinessException(
                     HttpStatus.BAD_REQUEST,
                     "roles.invalid"
             );
         }
 
-        user.setStore(store);
-        user.setRoles(roles);
+        User user = UserMapper.toEntity(dto, stores, roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User saved = userRepository.save(user);
@@ -72,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO getUserById(Long id) {
+    public UserResponseDTO getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 HttpStatus.NOT_FOUND,
                 "user.not_found",
@@ -91,7 +97,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(Long id, UserRequestDTO dto) {
+    public UserResponseDTO updateUser(String id, UserRequestDTO dto) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 HttpStatus.NOT_FOUND,
                 "user.not_found",
@@ -119,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(String id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException(
                     HttpStatus.NOT_FOUND,

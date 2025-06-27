@@ -7,34 +7,42 @@ import com.pds.localpos.userservice.dto.UserResponseDTO
 import com.pds.localpos.userservice.model.Role
 import com.pds.localpos.userservice.model.Store
 import com.pds.localpos.userservice.model.User
+import java.time.Instant
 
 fun Role.toDTO() = RoleDTO(
-    id = this.id,
-    name = this.name,
-    description = this.description
+    id = id,
+    name = name,
+    description = description
 )
 
 fun Store.toDTO() = StoreDTO(
-    id = this.id,
-    code = this.code,
-    name = this.name,
-    address = this.address,
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt
+    id = id,
+    code = code,
+    name = name,
+    address = address,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
-fun UserRequestDTO.toEntity(): User = User(
-    username = this.username,
-    password = this.password,
-    email = this.email
+fun UserRequestDTO.toEntity(
+    stores: Set<Store>,
+    roles: Set<Role>
+): User = User(
+    username = username,
+    password = password,
+    email = email,
+    stores = stores.toMutableSet(),
+    roles = roles.toMutableSet(),
+    createdAt = Instant.now(),
+    updatedAt = Instant.now()
 )
 
 fun User.toResponseDTO(): UserResponseDTO = UserResponseDTO(
-    id = this.id ?: 0,
-    username = this.username,
-    email = this.email,
-    store = this.store?.toDTO(),
-    roles = this.roles.map { it.toDTO() }.toSet(),
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt
+    id = id,
+    username = username,
+    email = email.orEmpty(),
+    stores = stores.map { it.toDTO() }.toSet(),
+    roles = roles.map { it.toDTO() }.toSet(),
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )

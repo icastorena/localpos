@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface StoreRepository : JpaRepository<Store, Long> {
+interface StoreRepository : JpaRepository<Store, String> {
 
-    fun findByCode(code: String): Store?
+    fun findByCodeIn(codes: Collection<String>): List<Store>
 }

@@ -3,7 +3,6 @@ package com.pds.localpos.userservice.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-
 import java.util.Set;
 
 public record UserRequestDTO(
@@ -22,10 +21,9 @@ public record UserRequestDTO(
         )
         String password,
 
-        @NotBlank(message = "user.storeCode.not_blank")
-        String storeCode,
+        @NotEmpty(message = "user.storeCodes.not_empty")
+        Set<@NotBlank(message = "storeCode.not_blank") String> storeCodes,
 
         @NotEmpty(message = "user.roleNames.not_empty")
-        Set<String> roleNames
-) {
-}
+        Set<@NotBlank(message = "roleName.not_blank") String> roleNames
+) {}

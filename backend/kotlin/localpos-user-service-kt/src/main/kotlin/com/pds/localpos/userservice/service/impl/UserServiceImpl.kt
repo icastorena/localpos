@@ -7,6 +7,7 @@ import com.pds.localpos.userservice.exception.ResourceNotFoundException
 import com.pds.localpos.userservice.mapper.toEntity
 import com.pds.localpos.userservice.mapper.toResponseDTO
 import com.pds.localpos.userservice.model.Role
+import com.pds.localpos.userservice.model.Store
 import com.pds.localpos.userservice.model.User
 import com.pds.localpos.userservice.repository.RoleRepository
 import com.pds.localpos.userservice.repository.StoreRepository
@@ -27,43 +28,33 @@ class UserServiceImpl(
 ) : UserService {
 
     override fun createUser(dto: UserRequestDTO): UserResponseDTO {
-        validateUsernameAndEmail(dto.username, dto.email)
+        requireUsernameNotExists(dto.username)
+        requireEmailNotExists(dto.email)
 
-        val store = storeRepository.findByCode(dto.storeCode)
-            ?: throw ResourceNotFoundException(HttpStatus.NOT_FOUND, "store.not_found")
+        val stores = validateAndGetStores(dto.storeCodes)
+        val roles = fetchAndValidateRoles(dto.roleNames)
 
-        val roles = fetchRolesByNames(dto.roleNames)
-
-        val user = dto.toEntity().apply {
-            this.store = store
-            this.roles = roles.toMutableSet()
-            this.password = passwordEncoder.encode(dto.password)
+        val user = dto.toEntity(stores, roles).apply {
+            password = passwordEncoder.encode(password)
         }
 
         return userRepository.save(user).toResponseDTO()
     }
 
-    @Transactional(readOnly = true)
-    override fun getUserById(id: Long): UserResponseDTO =
+    override fun getUserById(id: String): UserResponseDTO =
         userRepository.findById(id)
             .orElseThrow { ResourceNotFoundException(HttpStatus.NOT_FOUND, "user.not_found", id) }
             .toResponseDTO()
 
-    @Transactional(readOnly = true)
     override fun getAllUsers(): List<UserResponseDTO> =
         userRepository.findAll().map { it.toResponseDTO() }
 
-    override fun updateUser(id: Long, dto: UserRequestDTO): UserResponseDTO {
+    override fun updateUser(id: String, dto: UserRequestDTO): UserResponseDTO {
         val user = userRepository.findById(id)
             .orElseThrow { ResourceNotFoundException(HttpStatus.NOT_FOUND, "user.not_found", id) }
 
-        if (user.username != dto.username && userRepository.existsByUsername(dto.username)) {
-            throw BusinessException(HttpStatus.CONFLICT, "user.username.exists")
-        }
-
-        if (user.email != dto.email && userRepository.existsByEmail(dto.email)) {
-            throw BusinessException(HttpStatus.CONFLICT, "user.email.exists")
-        }
+        requireUsernameOrThrowIfExists(user.username, dto.username)
+        requireEmailOrThrowIfExists(user.email, dto.email)
 
         user.apply {
             username = dto.username
@@ -71,13 +62,14 @@ class UserServiceImpl(
             if (dto.password.isNotBlank()) {
                 password = passwordEncoder.encode(dto.password)
             }
-            roles = fetchRolesByNames(dto.roleNames).toMutableSet()
+            roles = fetchAndValidateRoles(dto.roleNames).toMutableSet()
+            stores = validateAndGetStores(dto.storeCodes).toMutableSet()
         }
 
         return userRepository.save(user).toResponseDTO()
     }
 
-    override fun deleteUser(id: Long) {
+    override fun deleteUser(id: String) {
         if (!userRepository.existsById(id)) {
             throw ResourceNotFoundException(HttpStatus.NOT_FOUND, "user.not_found", id)
         }
@@ -87,24 +79,53 @@ class UserServiceImpl(
     override fun findByUsername(username: String): User? =
         userRepository.findByUsername(username)
 
-    private fun fetchRolesByNames(roleNames: Set<String>): Set<Role> {
-        val roles = roleRepository.findByNameIn(roleNames)
+    private fun requireUsernameNotExists(username: String) {
+        if (userRepository.existsByUsername(username)) {
+            throw BusinessException(HttpStatus.CONFLICT, "user.username.exists")
+        }
+    }
 
-        if (roles.size != roleNames.size) {
-            val foundNames = roles.map { it.name }.toSet()
-            val missingNames = roleNames - foundNames
-            throw BusinessException(HttpStatus.BAD_REQUEST, "roles.missing", missingNames.joinToString(", "))
+    private fun requireEmailNotExists(email: String) {
+        if (userRepository.existsByEmail(email)) {
+            throw BusinessException(HttpStatus.CONFLICT, "user.email.exists")
+        }
+    }
+
+    private fun requireUsernameOrThrowIfExists(current: String, new: String) {
+        if (current != new && userRepository.existsByUsername(new)) {
+            throw BusinessException(HttpStatus.CONFLICT, "user.username.exists")
+        }
+    }
+
+    private fun requireEmailOrThrowIfExists(current: String?, new: String?) {
+        if (current != new && new != null && userRepository.existsByEmail(new)) {
+            throw BusinessException(HttpStatus.CONFLICT, "user.email.exists")
+        }
+    }
+
+    private fun fetchAndValidateRoles(roleNames: Set<String>): Set<Role> {
+        val roles = roleRepository.findByNameIn(roleNames)
+        val foundNames = roles.map { it.name }.toSet()
+        val missing = roleNames - foundNames
+
+        if (missing.isNotEmpty()) {
+            throw BusinessException(HttpStatus.BAD_REQUEST, "roles.missing", missing.joinToString(", "))
         }
 
         return roles
     }
 
-    private fun validateUsernameAndEmail(username: String, email: String) {
-        if (userRepository.existsByUsername(username)) {
-            throw BusinessException(HttpStatus.CONFLICT, "user.username.exists")
+    private fun validateAndGetStores(codes: Set<String>): Set<Store> {
+        if (codes.isEmpty()) return emptySet()
+
+        val stores = storeRepository.findByCodeIn(codes)
+        val foundCodes = stores.map { it.code }.toSet()
+        val missing = codes - foundCodes
+
+        if (missing.isNotEmpty()) {
+            throw BusinessException(HttpStatus.BAD_REQUEST, "stores.missing", missing.joinToString(", "))
         }
-        if (userRepository.existsByEmail(email)) {
-            throw BusinessException(HttpStatus.CONFLICT, "user.email.exists")
-        }
+
+        return stores.toSet()
     }
 }

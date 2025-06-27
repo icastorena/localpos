@@ -4,6 +4,7 @@ import com.pds.localpos.userservice.dto.RoleDTO;
 import com.pds.localpos.userservice.dto.StoreDTO;
 import com.pds.localpos.userservice.dto.UserRequestDTO;
 import com.pds.localpos.userservice.dto.UserResponseDTO;
+import com.pds.localpos.userservice.model.Role;
 import com.pds.localpos.userservice.model.Store;
 import com.pds.localpos.userservice.model.User;
 import org.springframework.stereotype.Component;
@@ -15,13 +16,16 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapper {
 
-    public static User toEntity(UserRequestDTO dto) {
+    public static User toEntity(UserRequestDTO dto, Set<Store> stores, Set<Role> roles) {
         if (dto == null) return null;
 
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(dto.password());
         user.setEmail(dto.email());
+
+        user.setStores(stores != null ? stores : Collections.emptySet());
+        user.setRoles(roles != null ? roles : Collections.emptySet());
 
         return user;
     }
@@ -30,8 +34,8 @@ public class UserMapper {
         if (user == null) return null;
 
         StoreDTO storeDTO = null;
-        if (user.getStore() != null) {
-            Store s = user.getStore();
+        if (user.getStores() != null && !user.getStores().isEmpty()) {
+            Store s = user.getStores().iterator().next();
             storeDTO = new StoreDTO(
                     s.getId(),
                     s.getCode(),

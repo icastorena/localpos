@@ -3,7 +3,7 @@ spring:
     name: Order Service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/localpos_user_db
+    url: jdbc:postgresql://localhost:5432/localpos_db
     username: localpos_user
     password: localpos_pass
     driver-class-name: org.postgresql.Driver

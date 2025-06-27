@@ -1,16 +1,16 @@
 services:
   postgres:
     image: postgres:15
-    container_name: localpos-postgres
+    container_name: localpos-db
     environment:
-      POSTGRES_DB: localpos_user_db
+      POSTGRES_DB: localpos_db
       POSTGRES_USER: localpos_user
       POSTGRES_PASSWORD: localpos_pass
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: "no"  # Prevent auto-restart
+    restart: unless-stopped
 
 volumes:
-  pgdata:  # Volume for PostgreSQL data
+  pgdata:

@@ -3,11 +3,9 @@ package com.pds.localpos.userservice.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -29,14 +27,13 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "stores", indexes = {
+@Table(name = "stores", schema = "users", indexes = {
         @Index(name = "idx_stores_name", columnList = "name")
 })
 public class Store {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(nullable = false, unique = true, length = 4)
     private String code;
@@ -47,7 +44,7 @@ public class Store {
     @Column(columnDefinition = "TEXT")
     private String address;
 
-    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "stores", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<User> users = new HashSet<>();
 

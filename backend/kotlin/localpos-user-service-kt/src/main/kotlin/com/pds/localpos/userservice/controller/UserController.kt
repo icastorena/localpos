@@ -26,7 +26,7 @@ class UserController(
 
     @PreAuthorize("hasAnyRole('OWNER','ADMIN','MANAGER')")
     @GetMapping("/{id}")
-    fun getUser(@PathVariable id: Long): ResponseEntity<UserResponseDTO> =
+    fun getUser(@PathVariable id: String): ResponseEntity<UserResponseDTO> =
         ResponseEntity.ok(userService.getUserById(id))
 
     @PreAuthorize("hasAnyRole('OWNER','ADMIN','MANAGER')")
@@ -36,12 +36,15 @@ class UserController(
 
     @PreAuthorize("hasAnyRole('OWNER','ADMIN','MANAGER')")
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: Long, @Valid @RequestBody dto: UserRequestDTO): ResponseEntity<UserResponseDTO> =
+    fun updateUser(
+        @PathVariable id: String,
+        @Valid @RequestBody dto: UserRequestDTO
+    ): ResponseEntity<UserResponseDTO> =
         ResponseEntity.ok(userService.updateUser(id, dto))
 
     @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     @DeleteMapping("/{id}")
-    fun deleteUser(@PathVariable id: Long): ResponseEntity<Void> {
+    fun deleteUser(@PathVariable id: String): ResponseEntity<Void> {
         userService.deleteUser(id)
         return ResponseEntity.noContent().build()
     }
@@ -49,12 +52,9 @@ class UserController(
     @PostMapping("/auth/validate")
     fun validateUser(@RequestBody request: LoginRequestDTO): ResponseEntity<UserResponseDTO> {
         val user = userService.findByUsername(request.username)
-            ?: throw BadCredentialsException("Invalid credentials")
-
-        if (!passwordEncoder.matches(request.password, user.password)) {
+        if (!passwordEncoder.matches(request.password, user?.password)) {
             throw BadCredentialsException("Invalid credentials")
         }
-
-        return ResponseEntity.ok(user.toResponseDTO())
+        return ResponseEntity.ok(user?.toResponseDTO())
     }
 }
