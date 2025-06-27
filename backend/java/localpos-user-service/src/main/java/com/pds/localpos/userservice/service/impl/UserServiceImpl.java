@@ -36,45 +36,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO dto) {
-        if (userRepository.existsByUsername(dto.username())) {
-            throw new BusinessException(HttpStatus.CONFLICT, "user.username.exists");
-        }
+        requireUsernameNotExists(dto.username());
+        requireEmailNotExists(dto.email());
 
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new BusinessException(HttpStatus.CONFLICT, "user.email.exists");
-        }
-
-        Set<Store> stores = new HashSet<>();
-        if (dto.storeCodes() != null && !dto.storeCodes().isEmpty()) {
-            stores = storeRepository.findByCodeIn(dto.storeCodes());
-            if (stores.size() != dto.storeCodes().size()) {
-                Set<String> foundCodes = stores.stream().map(Store::getCode).collect(Collectors.toSet());
-                Set<String> missingCodes = new HashSet<>(dto.storeCodes());
-                missingCodes.removeAll(foundCodes);
-                throw new BusinessException(
-                        HttpStatus.BAD_REQUEST,
-                        "stores.missing",
-                        String.join(", ", missingCodes)
-                );
-            }
-        }
-
+        Set<Store> stores = validateAndGetStores(dto.storeCodes());
         Set<Role> roles = fetchRolesByNames(dto.roleNames());
+
         if (roles.isEmpty()) {
-            throw new BusinessException(
-                    HttpStatus.BAD_REQUEST,
-                    "roles.invalid"
-            );
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "roles.invalid");
         }
 
         User user = UserMapper.toEntity(dto, stores, roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User saved = userRepository.save(user);
-
         return UserMapper.toDTO(saved);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -93,7 +70,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -104,25 +81,25 @@ public class UserServiceImpl implements UserService {
                 id
         ));
 
-        if (!user.getUsername().equals(dto.username()) && userRepository.existsByUsername(dto.username())) {
-            throw new BusinessException(HttpStatus.CONFLICT, "user.username.exists");
-        }
-
-        if (!user.getEmail().equals(dto.email()) && userRepository.existsByEmail(dto.email())) {
-            throw new BusinessException(HttpStatus.CONFLICT, "user.email.exists");
-        }
+        requireUsernameOrThrowIfExists(user.getUsername(), dto.username());
+        requireEmailOrThrowIfExists(user.getEmail(), dto.email());
 
         user.setUsername(dto.username());
         user.setEmail(dto.email());
+
         if (dto.password() != null && !dto.password().isBlank()) {
             user.setPassword(passwordEncoder.encode(dto.password()));
         }
 
         Set<Role> roles = fetchRolesByNames(dto.roleNames());
         user.setRoles(roles);
-        return UserMapper.toDTO(userRepository.save(user));
-    }
 
+        Set<Store> stores = validateAndGetStores(dto.storeCodes());
+        user.setStores(stores);
+
+        User updated = userRepository.save(user);
+        return UserMapper.toDTO(updated);
+    }
 
     @Override
     public void deleteUser(String id) {
@@ -137,8 +114,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    // --- Private helper validation methods ---
+
+    private void requireUsernameNotExists(String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "user.username.exists");
+        }
+    }
+
+    private void requireEmailNotExists(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "user.email.exists");
+        }
+    }
+
+    private void requireUsernameOrThrowIfExists(String current, String newUsername) {
+        if (!current.equals(newUsername) && userRepository.existsByUsername(newUsername)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "user.username.exists");
+        }
+    }
+
+    private void requireEmailOrThrowIfExists(String current, String newEmail) {
+        if (newEmail != null && !newEmail.equals(current) && userRepository.existsByEmail(newEmail)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "user.email.exists");
+        }
     }
 
     private Set<Role> fetchRolesByNames(Set<String> roleNames) {
@@ -160,5 +164,23 @@ public class UserServiceImpl implements UserService {
         }
 
         return roles;
+    }
+
+    private Set<Store> validateAndGetStores(Set<String> codes) {
+        if (codes == null || codes.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<Store> stores = storeRepository.findByCodeIn(codes);
+        Set<String> foundCodes = stores.stream().map(Store::getCode).collect(Collectors.toSet());
+
+        Set<String> missing = new HashSet<>(codes);
+        missing.removeAll(foundCodes);
+
+        if (!missing.isEmpty()) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "stores.missing", String.join(", ", missing));
+        }
+
+        return stores;
     }
 }

@@ -7,7 +7,7 @@ public record UserResponseDTO(
         String id,
         String username,
         String email,
-        StoreDTO store,
+        Set<StoreDTO> stores,
         Set<RoleDTO> roles,
         Instant createdAt,
         Instant updatedAt

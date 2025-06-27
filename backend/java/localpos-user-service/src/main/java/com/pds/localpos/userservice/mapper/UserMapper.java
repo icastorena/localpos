@@ -33,17 +33,17 @@ public class UserMapper {
     public static UserResponseDTO toDTO(User user) {
         if (user == null) return null;
 
-        StoreDTO storeDTO = null;
+        Set<StoreDTO> storesDTO = Collections.emptySet();
         if (user.getStores() != null && !user.getStores().isEmpty()) {
-            Store s = user.getStores().iterator().next();
-            storeDTO = new StoreDTO(
-                    s.getId(),
-                    s.getCode(),
-                    s.getName(),
-                    s.getAddress(),
-                    s.getCreatedAt(),
-                    s.getUpdatedAt()
-            );
+            storesDTO = user.getStores().stream()
+                    .map(s -> new StoreDTO(
+                            s.getId(),
+                            s.getCode(),
+                            s.getName(),
+                            s.getAddress(),
+                            s.getCreatedAt(),
+                            s.getUpdatedAt()))
+                    .collect(Collectors.toSet());
         }
 
         Set<RoleDTO> roleDTOs = Collections.emptySet();
@@ -57,7 +57,7 @@ public class UserMapper {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                storeDTO,
+                storesDTO,
                 roleDTOs,
                 user.getCreatedAt(),
                 user.getUpdatedAt()
