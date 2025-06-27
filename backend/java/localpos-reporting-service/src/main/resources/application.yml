@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Reporting Service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/localpos_db
+    username: localpos_user
+    password: localpos_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

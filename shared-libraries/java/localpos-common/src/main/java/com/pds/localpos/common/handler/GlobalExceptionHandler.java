@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -131,5 +132,23 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+        String correlationId = CorrelationIdHolder.get();
+
+        String timestamp = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.now());
+
+        InternalApplicationError error = InternalApplicationError.builder()
+                .correlationId(correlationId)
+                .timestamp(timestamp)
+                .errorCode(HttpStatus.UNAUTHORIZED.name())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 }
