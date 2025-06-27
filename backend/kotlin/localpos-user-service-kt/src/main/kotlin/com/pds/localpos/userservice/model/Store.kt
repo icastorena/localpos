@@ -1,6 +1,7 @@
 package com.pds.localpos.userservice.model
 
 import jakarta.persistence.*
+import org.hibernate.Hibernate
 import java.time.Instant
 import java.util.*
 
@@ -34,6 +35,7 @@ class Store(
     @Column(name = "updated_at")
     var updatedAt: Instant = Instant.now()
 ) {
+
     @PrePersist
     fun onCreate() {
         val now = Instant.now()
@@ -44,5 +46,21 @@ class Store(
     @PreUpdate
     fun onUpdate() {
         updatedAt = Instant.now()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) {
+            return false
+        }
+        other as Store
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+
+    override fun toString(): String {
+        val addr = address?.let { if (it.length > 50) it.substring(0, 50) + "..." else it }
+        return "Store(id=$id, code=$code, name=$name, address=$addr, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

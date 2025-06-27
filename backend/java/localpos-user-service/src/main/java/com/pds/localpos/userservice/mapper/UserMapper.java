@@ -17,50 +17,64 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     public static User toEntity(UserRequestDTO dto, Set<Store> stores, Set<Role> roles) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
 
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(dto.password());
         user.setEmail(dto.email());
-
         user.setStores(stores != null ? stores : Collections.emptySet());
         user.setRoles(roles != null ? roles : Collections.emptySet());
-
         return user;
     }
 
     public static UserResponseDTO toDTO(User user) {
-        if (user == null) return null;
-
-        Set<StoreDTO> storesDTO = Collections.emptySet();
-        if (user.getStores() != null && !user.getStores().isEmpty()) {
-            storesDTO = user.getStores().stream()
-                    .map(s -> new StoreDTO(
-                            s.getId(),
-                            s.getCode(),
-                            s.getName(),
-                            s.getAddress(),
-                            s.getCreatedAt(),
-                            s.getUpdatedAt()))
-                    .collect(Collectors.toSet());
+        if (user == null) {
+            return null;
         }
 
-        Set<RoleDTO> roleDTOs = Collections.emptySet();
-        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-            roleDTOs = user.getRoles().stream()
-                    .map(r -> new RoleDTO(r.getId(), r.getName(), r.getDescription()))
-                    .collect(Collectors.toSet());
-        }
+        Set<StoreDTO> storesDTO = mapStores(user.getStores());
+        Set<RoleDTO> rolesDTO = mapRoles(user.getRoles());
 
         return new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 storesDTO,
-                roleDTOs,
+                rolesDTO,
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
+    }
+
+    private static Set<StoreDTO> mapStores(Set<Store> stores) {
+        if (stores == null || stores.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return stores.stream()
+                .map(store -> new StoreDTO(
+                        store.getId(),
+                        store.getCode(),
+                        store.getName(),
+                        store.getAddress(),
+                        store.getCreatedAt(),
+                        store.getUpdatedAt()))
+                .collect(Collectors.toSet());
+    }
+
+    private static Set<RoleDTO> mapRoles(Set<Role> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return roles.stream()
+                .map(role -> new RoleDTO(
+                        role.getId(),
+                        role.getName(),
+                        role.getDescription()))
+                .collect(Collectors.toSet());
     }
 }

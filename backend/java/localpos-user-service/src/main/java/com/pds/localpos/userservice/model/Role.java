@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -45,21 +44,22 @@ public class Role {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || org.hibernate.Hibernate.getClass(this) != org.hibernate.Hibernate.getClass(o)) {
+            return false;
+        }
         Role role = (Role) o;
-        return id != null && Objects.equals(id, role.id);
+        return id != null && id.equals(role.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hashCode(id);
     }
 
     @Override
     public String toString() {
-        return "Role(id=" + id +
-                ", name=" + name +
-                ", description=" + (description != null ? (description.length() > 50 ? description.substring(0, 50) + "..." : description) : null) +
-                ')';
+        String desc = description == null ? null :
+                description.length() > 50 ? description.substring(0, 50) + "..." : description;
+        return "Role(id=" + id + ", name=" + name + ", description=" + desc + ")";
     }
 }

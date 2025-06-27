@@ -1,6 +1,7 @@
 package com.pds.localpos.userservice.model
 
 import jakarta.persistence.*
+import org.hibernate.Hibernate
 import java.util.*
 
 @Entity
@@ -23,4 +24,21 @@ class Role(
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     var users: MutableSet<User> = mutableSetOf()
-)
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)){
+            return false
+        }
+        other as Role
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+
+    override fun toString(): String {
+        val desc = description?.let { if (it.length > 50) it.substring(0, 50) + "..." else it }
+        return "Role(id=$id, name=$name, description=$desc)"
+    }
+}

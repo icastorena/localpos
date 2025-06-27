@@ -119,8 +119,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
-    // --- Private helper validation methods ---
-
     private void requireUsernameNotExists(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new BusinessException(HttpStatus.CONFLICT, "user.username.exists");
