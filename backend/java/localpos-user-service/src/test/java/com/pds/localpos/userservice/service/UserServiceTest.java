@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,6 +35,8 @@ class UserServiceTest {
     private StoreRepository storeRepository;
     private PasswordEncoder passwordEncoder;
     private UserServiceImpl userService;
+
+    private final String userId = UUID.randomUUID().toString();
 
     @BeforeEach
     void setup() {
@@ -87,7 +90,7 @@ class UserServiceTest {
         when(userRepository.existsByUsername("username")).thenReturn(false);
         when(userRepository.existsByEmail("email@example.com")).thenReturn(false);
         Store store = new Store();
-        store.setId(1L);
+        store.setId(UUID.randomUUID().toString());
         when(storeRepository.findByCode("storeCode")).thenReturn(Optional.of(store));
         when(roleRepository.findByNameIn(Set.of("ROLE_USER"))).thenReturn(Set.of(newRole()));
         when(passwordEncoder.encode("Password1!")).thenReturn("encodedPassword");
@@ -100,119 +103,149 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldThrow_whenUserNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(1L, newUserRequestDTO()));
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(userId, newUserRequestDTO()));
     }
 
     @Test
     void updateUser_shouldThrow_whenUsernameExistsAndDifferent() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("old");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("new")).thenReturn(true);
-        UserRequestDTO dto = new UserRequestDTO("new", "email@example.com", "Password1!", "storeCode", Set.of("ROLE_USER"));
-        assertThrows(BusinessException.class, () -> userService.updateUser(1L, dto));
+        UserRequestDTO dto = new UserRequestDTO(
+                "new",
+                "email@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                Set.of("ROLE_USER")
+        );
+        assertThrows(BusinessException.class, () -> userService.updateUser(userId, dto));
     }
 
     @Test
     void updateUser_shouldThrow_whenEmailExistsAndDifferent() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("username");
         user.setEmail("old@example.com");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("username")).thenReturn(false);
         when(userRepository.existsByEmail("new@example.com")).thenReturn(true);
-        UserRequestDTO dto = new UserRequestDTO("username", "new@example.com", "Password1!", "storeCode", Set.of("ROLE_USER"));
-        assertThrows(BusinessException.class, () -> userService.updateUser(1L, dto));
+        UserRequestDTO dto = new UserRequestDTO(
+                "username",
+                "new@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                Set.of("ROLE_USER")
+        );
+        assertThrows(BusinessException.class, () -> userService.updateUser(userId, dto));
     }
 
     @Test
     void updateUser_shouldThrow_whenRolesMissing() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("user");
         user.setEmail("user@example.com");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("user")).thenReturn(false);
         when(userRepository.existsByEmail("user@example.com")).thenReturn(false);
         when(roleRepository.findByNameIn(Set.of("ROLE_USER", "ROLE_MISSING"))).thenReturn(Set.of(newRole()));
-        UserRequestDTO dto = new UserRequestDTO("user", "user@example.com", "Password1!", "storeCode", Set.of("ROLE_USER", "ROLE_MISSING"));
-        BusinessException ex = assertThrows(BusinessException.class, () -> userService.updateUser(1L, dto));
+        UserRequestDTO dto = new UserRequestDTO(
+                "user",
+                "user@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                Set.of("ROLE_USER", "ROLE_MISSING")
+        );
+        BusinessException ex = assertThrows(BusinessException.class, () -> userService.updateUser(userId, dto));
         assertEquals("roles.missing", ex.getMessage());
     }
 
     @Test
     void updateUser_shouldAccept_whenRoleNamesIsNull() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("user");
         user.setEmail("user@example.com");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("user")).thenReturn(false);
         when(userRepository.existsByEmail("user@example.com")).thenReturn(false);
         when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        UserRequestDTO dto = new UserRequestDTO("user", "user@example.com", "Password1!", "storeCode", null);
-        UserResponseDTO response = userService.updateUser(1L, dto);
+        UserRequestDTO dto = new UserRequestDTO(
+                "user",
+                "user@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                null
+        );
+        UserResponseDTO response = userService.updateUser(userId, dto);
         assertNotNull(response);
     }
 
     @Test
     void updateUser_shouldAccept_whenRoleNamesIsEmpty() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("user");
         user.setEmail("user@example.com");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("user")).thenReturn(false);
         when(userRepository.existsByEmail("user@example.com")).thenReturn(false);
         when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        UserRequestDTO dto = new UserRequestDTO("user", "user@example.com", "Password1!", "storeCode", Set.of());
-        UserResponseDTO response = userService.updateUser(1L, dto);
+        UserRequestDTO dto = new UserRequestDTO(
+                "user",
+                "user@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                Set.of()
+        );
+        UserResponseDTO response = userService.updateUser(userId, dto);
         assertNotNull(response);
     }
 
     @Test
     void updateUser_shouldUpdate_whenValid() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("user");
         user.setEmail("user@example.com");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.existsByUsername("user")).thenReturn(false);
         when(userRepository.existsByEmail("user@example.com")).thenReturn(false);
         when(roleRepository.findByNameIn(Set.of("ROLE_USER"))).thenReturn(Set.of(newRole()));
         when(passwordEncoder.encode("Password1!")).thenReturn("encoded");
         when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         UserRequestDTO dto = newUserRequestDTO();
-        UserResponseDTO response = userService.updateUser(1L, dto);
+        UserResponseDTO response = userService.updateUser(userId, dto);
         assertNotNull(response);
     }
 
     @Test
     void getUserById_shouldReturn_whenExists() {
         User user = new User();
-        user.setId(1L);
+        user.setId(userId);
         user.setUsername("test");
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        UserResponseDTO result = userService.getUserById(1L);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        UserResponseDTO result = userService.getUserById(userId);
         assertEquals("test", result.username());
     }
 
     @Test
     void getUserById_shouldThrow_whenNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L));
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(userId));
     }
 
     @Test
     void getAllUsers_shouldReturnList() {
         User u1 = new User();
-        u1.setId(1L);
+        u1.setId(UUID.randomUUID().toString());
         u1.setUsername("u1");
         User u2 = new User();
-        u2.setId(2L);
+        u2.setId(UUID.randomUUID().toString());
         u2.setUsername("u2");
         when(userRepository.findAll()).thenReturn(List.of(u1, u2));
         List<UserResponseDTO> result = userService.getAllUsers();
@@ -221,22 +254,32 @@ class UserServiceTest {
 
     @Test
     void deleteUser_shouldThrow_whenNotExists() {
-        when(userRepository.existsById(1L)).thenReturn(false);
-        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
+        when(userRepository.existsById(userId)).thenReturn(false);
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(userId));
     }
 
     @Test
     void deleteUser_shouldDelete_whenExists() {
-        when(userRepository.existsById(1L)).thenReturn(true);
-        userService.deleteUser(1L);
-        verify(userRepository).deleteById(1L);
+        when(userRepository.existsById(userId)).thenReturn(true);
+        userService.deleteUser(userId);
+        verify(userRepository).deleteById(userId);
     }
 
     private UserRequestDTO newUserRequestDTO() {
-        return new UserRequestDTO("username", "email@example.com", "Password1!", "storeCode", Set.of("ROLE_USER"));
+        return new UserRequestDTO(
+                "username",
+                "email@example.com",
+                "Password1!",
+                Set.of("storeCode"),
+                Set.of("ROLE_USER")
+        );
     }
 
     private Role newRole() {
-        return Role.builder().id(1L).name("ROLE_USER").description("User").build();
+        return Role.builder()
+                .id(UUID.randomUUID().toString())
+                .name("ROLE_USER")
+                .description("User")
+                .build();
     }
 }
