@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.25"
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.autonomousapps.dependency-analysis") version "1.19.0"
 }
 
 group = "com.pds"
@@ -34,7 +35,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    // JWT Libraries
+    // JWT
     implementation("io.jsonwebtoken:jjwt-api:${property("jjwt.version")}")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:${property("jjwt.version")}")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:${property("jjwt.version")}")
@@ -42,20 +43,20 @@ dependencies {
     // Database Driver
     runtimeOnly("org.postgresql:postgresql")
 
+    // Common internal libraries
+    implementation("com.pds:localpos-common-kt:1.0.0")
+    implementation("com.pds:localpos-common-security-kt:1.0.0")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // Common Security Library
-    implementation("com.pds:localpos-common-kt:1.0.0")
-    implementation("com.pds:localpos-common-security-kt:1.0.0")
 }
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll(listOf("-Xjsr305=strict"))
+        freeCompilerArgs.add("-Xjsr305=strict")
     }
 }
 
