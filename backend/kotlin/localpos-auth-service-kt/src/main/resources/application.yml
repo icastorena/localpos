@@ -11,6 +11,10 @@ security:
     access-token-expiration: 14400000
     refresh-token-expiration: 604800000
 
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:5173
 
 server:
   port: 8081

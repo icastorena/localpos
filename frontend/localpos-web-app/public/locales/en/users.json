@@ -1,0 +1,43 @@
+{
+  "title": "Users Management",
+  "buttons": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "fields": {
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "roles": "Roles",
+    "stores": "Stores",
+    "actions": "Actions"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this user?"
+  },
+  "messages": {
+    "userCreated": "User created successfully",
+    "userUpdated": "User updated successfully",
+    "userDeleted": "User deleted successfully",
+    "errorLoading": "Error loading users",
+    "errorSaving": "Error saving user",
+    "errorDeleting": "Error deleting user",
+    "errorLoadingData": "Error loading data",
+    "userSaved": "User saved successfully"
+  },
+  "errors": {
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is invalid",
+    "rolesRequired": "At least one role is required",
+    "storesRequired": "At least one store is required"
+  },
+  "helpers": {
+    "leaveBlankToKeepPassword": "Leave blank to keep the current password"
+  }
+}

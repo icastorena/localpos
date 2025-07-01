@@ -1,0 +1,11 @@
+{
+  "title": "LocalPOS Login",
+  "username": "Username",
+  "password": "Password",
+  "submit": "Login",
+  "errors": {
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "loginFailed": "Login failed"
+  }
+}

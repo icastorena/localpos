@@ -1,0 +1,11 @@
+{
+  "title": "Inicio de sesión LocalPOS",
+  "username": "Usuario",
+  "password": "Contraseña",
+  "submit": "Iniciar sesión",
+  "errors": {
+    "usernameRequired": "El nombre de usuario es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "loginFailed": "Inicio de sesión fallido"
+  }
+}

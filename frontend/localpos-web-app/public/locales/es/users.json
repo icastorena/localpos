@@ -1,0 +1,43 @@
+{
+  "title": "Gestión de Usuarios",
+  "buttons": {
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "fields": {
+    "username": "Nombre de usuario",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "roles": "Roles",
+    "stores": "Tiendas",
+    "actions": "Acciones"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteMessage": "¿Estás seguro de que deseas eliminar este usuario?"
+  },
+  "messages": {
+    "userCreated": "Usuario creado exitosamente",
+    "userUpdated": "Usuario actualizado exitosamente",
+    "userDeleted": "Usuario eliminado exitosamente",
+    "errorLoading": "Error al cargar usuarios",
+    "errorSaving": "Error al guardar usuario",
+    "errorDeleting": "Error al eliminar usuario",
+    "errorLoadingData": "Error al cargar datos",
+    "userSaved": "Usuario guardado exitosamente"
+  },
+  "errors": {
+    "usernameRequired": "El nombre de usuario es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "emailInvalid": "El correo electrónico no es válido",
+    "rolesRequired": "Se requiere al menos un rol",
+    "storesRequired": "Se requiere al menos una tienda"
+  },
+  "helpers": {
+    "leaveBlankToKeepPassword": "Deja vacío para mantener la contraseña actual"
+  }
+}
