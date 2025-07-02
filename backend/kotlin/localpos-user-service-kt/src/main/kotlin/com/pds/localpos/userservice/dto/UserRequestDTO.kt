@@ -15,11 +15,7 @@ data class UserRequestDTO(
     )
     val email: String,
 
-    @field:Pattern(
-        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$",
-        message = "user.password.strong"
-    )
-    val password: String,
+    val password: String?,
 
     @field:NotEmpty(message = "user.storeCodes.not_empty")
     val storeCodes: Set<@NotBlank(message = "storeCode.not_blank") String>,

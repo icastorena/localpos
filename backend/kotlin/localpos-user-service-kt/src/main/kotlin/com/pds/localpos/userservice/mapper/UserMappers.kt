@@ -11,7 +11,7 @@ import java.time.Instant
 
 fun Role.toDTO() = RoleDTO(
     id = id,
-    name = name,
+    name = name.name,
     description = description
 )
 
@@ -29,7 +29,7 @@ fun UserRequestDTO.toEntity(
     roles: Set<Role>
 ): User = User(
     username = username,
-    password = password,
+    password = "",
     email = email,
     stores = stores.toMutableSet(),
     roles = roles.toMutableSet(),

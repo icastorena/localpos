@@ -7,6 +7,7 @@ import com.pds.localpos.userservice.dto.UserResponseDTO
 import com.pds.localpos.userservice.mapper.toEntity
 import com.pds.localpos.userservice.mapper.toResponseDTO
 import com.pds.localpos.userservice.model.Role
+import com.pds.localpos.userservice.model.RoleName
 import com.pds.localpos.userservice.model.Store
 import com.pds.localpos.userservice.model.User
 import com.pds.localpos.userservice.repository.RoleRepository
@@ -30,12 +31,13 @@ class UserServiceImpl(
     override fun createUser(dto: UserRequestDTO): UserResponseDTO {
         requireUsernameNotExists(dto.username)
         requireEmailNotExists(dto.email)
+        validatePassword(dto.password ?: throw BusinessException(HttpStatus.BAD_REQUEST, "user.password.not_blank"))
 
         val stores = validateAndGetStores(dto.storeCodes)
         val roles = fetchAndValidateRoles(dto.roleNames)
 
         val user = dto.toEntity(stores, roles).apply {
-            password = passwordEncoder.encode(password)
+            password = passwordEncoder.encode(dto.password)
         }
 
         return userRepository.save(user).toResponseDTO()
@@ -47,7 +49,11 @@ class UserServiceImpl(
             .toResponseDTO()
 
     override fun getAllUsers(): List<UserResponseDTO> =
-        userRepository.findAll().map { it.toResponseDTO() }
+        userRepository.findAll()
+            .filter { user ->
+                user.roles.none { RoleName.OWNER == it.name || RoleName.ADMIN == it.name }
+            }
+            .map { it.toResponseDTO() }
 
     override fun updateUser(id: String, dto: UserRequestDTO): UserResponseDTO {
         val user = userRepository.findById(id)
@@ -59,7 +65,8 @@ class UserServiceImpl(
         user.apply {
             username = dto.username
             email = dto.email
-            if (dto.password.isNotBlank()) {
+            if (!dto.password.isNullOrBlank()) {
+                validatePassword(dto.password)
                 password = passwordEncoder.encode(dto.password)
             }
             roles = fetchAndValidateRoles(dto.roleNames).toMutableSet()
@@ -85,6 +92,16 @@ class UserServiceImpl(
         }
     }
 
+    private fun validatePassword(password: String?) {
+        if (password.isNullOrBlank()) {
+            throw BusinessException(HttpStatus.BAD_REQUEST, "user.password.not_blank", "Password is required")
+        }
+        val passwordPattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$")
+        if (!passwordPattern.matches(password)) {
+            throw BusinessException(HttpStatus.BAD_REQUEST, "user.password.strong", "Password is not strong enough")
+        }
+    }
+
     private fun requireEmailNotExists(email: String) {
         if (userRepository.existsByEmail(email)) {
             throw BusinessException(HttpStatus.CONFLICT, "user.email.exists")
@@ -104,9 +121,19 @@ class UserServiceImpl(
     }
 
     private fun fetchAndValidateRoles(roleNames: Set<String>): Set<Role> {
-        val roles = roleRepository.findByNameIn(roleNames)
+        val enumNames = try {
+            roleNames.map { RoleName.valueOf(it) }.toSet()
+        } catch (ex: IllegalArgumentException) {
+            throw BusinessException(
+                HttpStatus.BAD_REQUEST,
+                "roles.invalid",
+                ex.message ?: "The specified roles are invalid."
+            )
+        }
+
+        val roles = roleRepository.findByNameIn(enumNames)
         val foundNames = roles.map { it.name }.toSet()
-        val missing = roleNames - foundNames
+        val missing = enumNames - foundNames
 
         if (missing.isNotEmpty()) {
             throw BusinessException(HttpStatus.BAD_REQUEST, "roles.missing", missing.joinToString(", "))
@@ -114,6 +141,7 @@ class UserServiceImpl(
 
         return roles
     }
+
 
     private fun validateAndGetStores(codes: Set<String>): Set<Store> {
         if (codes.isEmpty()) return emptySet()

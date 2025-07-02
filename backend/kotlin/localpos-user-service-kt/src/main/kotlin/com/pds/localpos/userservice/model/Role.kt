@@ -16,8 +16,9 @@ class Role(
     @Column(length = 36, updatable = false, nullable = false)
     var id: String = UUID.randomUUID().toString(),
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true, length = 50)
-    var name: String = "",
+    var name: RoleName = RoleName.CASHIER,
 
     @Column(length = 255)
     var description: String? = null,
@@ -28,7 +29,7 @@ class Role(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)){
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) {
             return false
         }
         other as Role
