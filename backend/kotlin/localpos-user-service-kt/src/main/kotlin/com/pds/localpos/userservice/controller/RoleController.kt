@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class RoleController(
     private val roleService: RoleService
 ) {
+
     @GetMapping
     fun getAllRoles(): ResponseEntity<List<RoleDTO>> {
         val roles = roleService.getAllRoles()
