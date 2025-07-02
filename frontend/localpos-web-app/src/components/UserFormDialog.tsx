@@ -20,6 +20,11 @@ interface User {
     id: string;
     username: string;
     email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    address?: string;
+    isActive: boolean;
     roles: { name: string }[];
     stores: { name: string }[];
     createdAt: string;
@@ -45,6 +50,10 @@ interface FormValues {
     username: string;
     email: string;
     password: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    address: string;
     roles: Role[];
     stores: Store[];
 }
@@ -85,96 +94,84 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
     }, [open, apiUrl, token, t]);
 
     const initialValues: FormValues = useMemo(() => {
-        if (!allRoles.length || !allStores.length) {
-            return {
-                username: userToEdit?.username || "",
-                email: userToEdit?.email || "",
-                password: "",
-                roles: [],
-                stores: [],
-            };
-        }
-        return {
-            username: userToEdit?.username || "",
-            email: userToEdit?.email || "",
+        const empty: FormValues = {
+            username: "",
+            email: "",
             password: "",
-            roles: userToEdit
-                ? allRoles.filter((r) => userToEdit.roles.some((ur) => ur.name === r.name))
-                : [],
-            stores: userToEdit
-                ? allStores.filter((s) => userToEdit.stores.some((us) => us.name === s.name))
-                : [],
+            firstName: "",
+            lastName: "",
+            phone: "",
+            address: "",
+            roles: [],
+            stores: [],
+        };
+
+        if (!userToEdit || !allRoles.length || !allStores.length) return empty;
+
+        return {
+            username: userToEdit.username,
+            email: userToEdit.email,
+            password: "",
+            firstName: userToEdit.firstName || "",
+            lastName: userToEdit.lastName || "",
+            phone: userToEdit.phone || "",
+            address: userToEdit.address || "",
+            roles: allRoles.filter((r) => userToEdit.roles.some((ur) => ur.name === r.name)),
+            stores: allStores.filter((s) => userToEdit.stores.some((us) => us.name === s.name)),
         };
     }, [userToEdit, allRoles, allStores]);
 
-    const validationSchema = userToEdit
-        ? Yup.object({
-            username: Yup.string().required(t("errors.usernameRequired")),
-            email: Yup.string()
-                .email(t("errors.emailInvalid"))
-                .required(t("errors.emailRequired")),
-            roles: Yup.array().min(1, t("errors.rolesRequired")),
-            stores: Yup.array().min(1, t("errors.storesRequired")),
-        })
-        : Yup.object({
-            username: Yup.string().required(t("errors.usernameRequired")),
-            email: Yup.string()
-                .email(t("errors.emailInvalid"))
-                .required(t("errors.emailRequired")),
-            password: Yup.string()
-                .required(t("errors.passwordRequired"))
-                .matches(passwordRegex, t("errors.passwordStrong")),
-            roles: Yup.array().min(1, t("errors.rolesRequired")),
-            stores: Yup.array().min(1, t("errors.storesRequired")),
-        });
+    const validationSchema = Yup.object({
+        username: Yup.string().required(t("errors.usernameRequired")),
+        email: Yup.string().email(t("errors.emailInvalid")).required(t("errors.emailRequired")),
+        firstName: Yup.string().required(t("errors.firstNameRequired")),
+        lastName: Yup.string().required(t("errors.lastNameRequired")),
+        phone: Yup.string(),
+        address: Yup.string(),
+        ...(userToEdit
+            ? {}
+            : {
+                password: Yup.string()
+                    .required(t("errors.passwordRequired"))
+                    .matches(passwordRegex, t("errors.passwordStrong")),
+            }),
+        roles: Yup.array().min(1, t("errors.rolesRequired")),
+        stores: Yup.array().min(1, t("errors.storesRequired")),
+    });
 
     const handleSubmit = async (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
+        {setSubmitting, setErrors}: FormikHelpers<FormValues>
     ) => {
-        const {setSubmitting, setErrors} = formikHelpers;
         try {
             const payload: any = {
                 username: values.username,
                 email: values.email,
+                firstName: values.firstName,
+                lastName: values.lastName,
+                phone: values.phone,
+                address: values.address,
                 roleNames: values.roles.map((r) => r.name),
                 storeCodes: values.stores.map((s) => s.code),
             };
-            if (!userToEdit && values.password) {
-                payload.password = values.password;
-            }
+            if (!userToEdit && values.password) payload.password = values.password;
 
-            let res;
-            if (userToEdit) {
-                res = await axios.put<User>(
-                    `${apiUrl}/api/v1/users/${userToEdit.id}`,
-                    payload,
-                    {
-                        headers: {Authorization: `Bearer ${token}`},
-                    }
-                );
-                onSaved(res.data);
-                onClose();
-                await MySwal.fire({
-                    icon: "success",
-                    title: t("messages.userUpdated") || "User updated successfully",
-                });
-            } else {
-                res = await axios.post<User>(`${apiUrl}/api/v1/users`, payload, {
+            const res = userToEdit
+                ? await axios.put<User>(`${apiUrl}/api/v1/users/${userToEdit.id}`, payload, {
+                    headers: {Authorization: `Bearer ${token}`},
+                })
+                : await axios.post<User>(`${apiUrl}/api/v1/users`, payload, {
                     headers: {Authorization: `Bearer ${token}`},
                 });
-                onSaved(res.data);
-                onClose();
-                await MySwal.fire({
-                    icon: "success",
-                    title: t("messages.userCreated") || "User created successfully",
-                });
-            }
-        } catch (error: unknown) {
-            const message =
-                (error as any)?.response?.data?.message ||
-                (error as Error).message ||
-                t("messages.errorSaving");
+
+            onSaved(res.data);
+            onClose();
+            await MySwal.fire({
+                icon: "success",
+                title: userToEdit ? t("messages.userUpdated") : t("messages.userCreated"),
+            });
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error.message || t("messages.errorSaving");
             await MySwal.fire({icon: "error", title: message});
             setErrors({username: message});
         } finally {
@@ -211,7 +208,6 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                                     {({field}: FieldProps) => (
                                         <TextField
                                             label={t("fields.email")}
-                                            type="email"
                                             fullWidth
                                             {...field}
                                             error={touched.email && Boolean(errors.email)}
@@ -235,6 +231,43 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                                     </Field>
                                 )}
 
+                                <Field name="firstName">
+                                    {({field}: FieldProps) => (
+                                        <TextField
+                                            label={t("fields.firstName")}
+                                            fullWidth
+                                            {...field}
+                                            error={touched.firstName && Boolean(errors.firstName)}
+                                            helperText={touched.firstName && errors.firstName}
+                                        />
+                                    )}
+                                </Field>
+
+                                <Field name="lastName">
+                                    {({field}: FieldProps) => (
+                                        <TextField
+                                            label={t("fields.lastName")}
+                                            fullWidth
+                                            {...field}
+                                            error={touched.lastName && Boolean(errors.lastName)}
+                                            helperText={touched.lastName && errors.lastName}
+                                        />
+                                    )}
+                                </Field>
+
+                                <Field name="phone">
+                                    {({field}: FieldProps) => (
+                                        <TextField label={t("fields.phone")} fullWidth {...field} />
+                                    )}
+                                </Field>
+
+                                <Field name="address">
+                                    {({field}: FieldProps) => (
+                                        <TextField label={t("fields.address")} fullWidth multiline
+                                                   rows={2} {...field} />
+                                    )}
+                                </Field>
+
                                 <Autocomplete
                                     multiple
                                     options={allRoles}
@@ -246,9 +279,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                                             {...params}
                                             label={t("fields.roles")}
                                             error={touched.roles && Boolean(errors.roles)}
-                                            helperText={
-                                                touched.roles && errors.roles ? String(errors.roles) : ""
-                                            }
+                                            helperText={touched.roles && errors.roles ? String(errors.roles) : ""}
                                         />
                                     )}
                                 />
@@ -264,9 +295,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                                             {...params}
                                             label={t("fields.stores")}
                                             error={touched.stores && Boolean(errors.stores)}
-                                            helperText={
-                                                touched.stores && errors.stores ? String(errors.stores) : ""
-                                            }
+                                            helperText={touched.stores && errors.stores ? String(errors.stores) : ""}
                                         />
                                     )}
                                 />

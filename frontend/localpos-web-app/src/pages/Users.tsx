@@ -26,6 +26,11 @@ interface User {
     id: string;
     username: string;
     email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    address?: string;
+    isActive: boolean;
     roles: { name: string }[];
     stores: { name: string }[];
     createdAt: string;
@@ -151,23 +156,29 @@ const Users: React.FC = () => {
                                     borderBottom: (theme) => `2px solid ${theme.palette.divider}`,
                                 }}
                             >
-                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
-                                    {t("fields.username")}
-                                </TableCell>
-                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
-                                    {t("fields.email")}
-                                </TableCell>
-                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
-                                    {t("fields.roles")}
-                                </TableCell>
-                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
-                                    {t("fields.stores")}
-                                </TableCell>
-                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
-                                    {t("fields.actions")}
-                                </TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.username")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.email")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.firstName")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.lastName")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.phone")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.address")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.roles")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.stores")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.isActive")}</TableCell>
+                                <TableCell
+                                    sx={{fontWeight: "bold", color: "text.primary"}}>{t("fields.actions")}</TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {users.map((user) => (
                                 <TableRow
@@ -175,25 +186,30 @@ const Users: React.FC = () => {
                                     hover
                                     sx={{
                                         backgroundColor: "background.default",
-                                        "&:hover": {
-                                            backgroundColor: "action.hover",
-                                        },
-                                        borderBottom: (theme) =>
-                                            `1px solid ${theme.palette.divider}`,
+                                        "&:hover": {backgroundColor: "action.hover"},
+                                        borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
                                     }}
                                 >
-                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
-                                        {user.username}
-                                    </TableCell>
-                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
-                                        {user.email}
-                                    </TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.username}</TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.email}</TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.firstName}</TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.lastName}</TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.phone}</TableCell>
+                                    <TableCell
+                                        sx={{color: "text.primary", fontSize: "0.95rem"}}>{user.address}</TableCell>
                                     <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
                                         {user.roles.map((r) => t(`rolesDisplay.${r.name}`)).join(", ")}
-
                                     </TableCell>
                                     <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
                                         {user.stores.map((s) => s.name).join(", ")}
+                                    </TableCell>
+                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
+                                        {user.isActive ? t("fields.active") : t("fields.inactive")}
                                     </TableCell>
                                     <TableCell>
                                         <IconButton

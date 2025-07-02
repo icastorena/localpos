@@ -11,9 +11,16 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "address": "Address",
+    "isActive": "Status",
     "roles": "Roles",
     "stores": "Stores",
-    "actions": "Actions"
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "dialogs": {
     "confirmDeleteTitle": "Confirm Delete",
@@ -32,11 +39,13 @@
   "errors": {
     "usernameRequired": "Username is required",
     "passwordRequired": "Password is required",
-    "passwordStrong": "Password must be at least 8 characters and include uppercase, lowercase, number and special character.",
+    "passwordStrong": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
     "emailRequired": "Email is required",
     "emailInvalid": "Email is invalid",
     "rolesRequired": "At least one role is required",
-    "storesRequired": "At least one store is required"
+    "storesRequired": "At least one store is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required"
   },
   "rolesDisplay": {
     "OWNER": "Owner",

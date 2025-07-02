@@ -8,12 +8,19 @@
     "cancel": "Cancelar"
   },
   "fields": {
-    "username": "Nombre de usuario",
+    "username": "Usuario",
     "email": "Correo electrónico",
     "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "isActive": "Estatus",
     "roles": "Roles",
-    "stores": "Tiendas",
-    "actions": "Acciones"
+    "stores": "Sucursales",
+    "actions": "Acciones",
+    "active": "Activo",
+    "inactive": "Inactivo"
   },
   "dialogs": {
     "confirmDeleteTitle": "Confirmar Eliminación",
@@ -36,7 +43,9 @@
     "emailRequired": "El correo electrónico es obligatorio",
     "emailInvalid": "El correo electrónico no es válido",
     "rolesRequired": "Se requiere al menos un rol",
-    "storesRequired": "Se requiere al menos una tienda"
+    "storesRequired": "Se requiere al menos una tienda",
+    "firstNameRequired": "El nombre es obligatorio",
+    "lastNameRequired": "El apellido es obligatorio"
   },
   "rolesDisplay": {
     "OWNER": "Propietario",
