@@ -14,5 +14,6 @@ INSERT INTO users.user_stores (user_id, store_id) VALUES
   ('b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4', '1bb3b69f-62d2-4b52-b8c2-8355057e8d60'),
   ('704a1fc9-b42e-4f7c-9bfc-53309a31e50b', '963e2cb6-8f97-4e6c-91c1-03b70f195911'),
   ('dd6a8d38-9d0a-4ea2-b04c-cd5ff5ff1d82', '963e2cb6-8f97-4e6c-91c1-03b70f195911'),
-  ('251ed3a1-c2c6-4a0a-bb45-5b8b08e5703a', '1bb3b69f-62d2-4b52-b8c2-8355057e8d60')
+  ('251ed3a1-c2c6-4a0a-bb45-5b8b08e5703a', '1bb3b69f-62d2-4b52-b8c2-8355057e8d60'),
+  ('82779ee2-c306-480d-8c8e-8bbeed536d87', '1bb3b69f-62d2-4b52-b8c2-8355057e8d60')
 ON CONFLICT DO NOTHING;
