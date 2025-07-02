@@ -29,13 +29,21 @@ interface User {
     roles: { name: string }[];
     stores: { name: string }[];
     createdAt: string;
+    updatedAt: string;
 }
 
 const Users: React.FC = () => {
     const {t} = useTranslation("users");
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [formDialog, setFormDialog] = useState<{ open: boolean; userToEdit: User | null }>({open: false, userToEdit: null});
+    const [formDialog, setFormDialog] = useState<{
+        open: boolean;
+        userToEdit: User | null;
+    }>({
+        open: false,
+        userToEdit: null,
+    });
+
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
     const token = sessionStorage.getItem("jwt_token");
 
@@ -86,7 +94,12 @@ const Users: React.FC = () => {
             }
             return [...prev, savedUser];
         });
-        MySwal.fire({icon: "success", title: savedUser.id ? t("messages.userUpdated") : t("messages.userCreated")});
+        MySwal.fire({
+            icon: "success",
+            title: savedUser.id
+                ? t("messages.userUpdated")
+                : t("messages.userCreated"),
+        });
     };
 
     useEffect(() => {
@@ -95,41 +108,114 @@ const Users: React.FC = () => {
 
     return (
         <Box p={4}>
-            <Typography variant="h5" mb={2}>{t("title")}</Typography>
-            <Box mb={2} display="flex" justifyContent="flex-end">
-                <Button variant="contained" startIcon={<AddIcon/>} onClick={() => setFormDialog({open: true, userToEdit: null})}>
+            <Typography variant="h5" mb={3} fontWeight="bold" color="text.primary">
+                {t("title")}
+            </Typography>
+
+            <Box mb={3} display="flex" justifyContent="flex-end">
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon/>}
+                    onClick={() => setFormDialog({open: true, userToEdit: null})}
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 500,
+                    }}
+                >
                     {t("buttons.create")}
                 </Button>
             </Box>
+
             {loading ? (
-                <CircularProgress/>
+                <Box display="flex" justifyContent="center" mt={6}>
+                    <CircularProgress/>
+                </Box>
             ) : (
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>{t("fields.username")}</TableCell>
-                            <TableCell>{t("fields.email")}</TableCell>
-                            <TableCell>{t("fields.roles")}</TableCell>
-                            <TableCell>{t("fields.stores")}</TableCell>
-                            <TableCell>{t("fields.actions")}</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users.map((user) => (
-                            <TableRow key={user.id}>
-                                <TableCell>{user.username}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>{user.roles.map((r) => r.name).join(", ")}</TableCell>
-                                <TableCell>{user.stores.map((s) => s.name).join(", ")}</TableCell>
-                                <TableCell>
-                                    <IconButton onClick={() => setFormDialog({open: true, userToEdit: user})}><EditIcon/></IconButton>
-                                    <IconButton onClick={() => deleteUser(user.id)}><DeleteIcon/></IconButton>
+                <Box
+                    sx={{
+                        overflowX: "auto",
+                        borderRadius: 3,
+                        boxShadow: 2,
+                        bgcolor: "background.paper",
+                    }}
+                >
+                    <Table sx={{minWidth: 650}}>
+                        <TableHead>
+                            <TableRow
+                                sx={{
+                                    backgroundColor: (theme) =>
+                                        theme.palette.mode === "dark"
+                                            ? theme.palette.grey[900]
+                                            : theme.palette.grey[100],
+                                    borderBottom: (theme) => `2px solid ${theme.palette.divider}`,
+                                }}
+                            >
+                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
+                                    {t("fields.username")}
+                                </TableCell>
+                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
+                                    {t("fields.email")}
+                                </TableCell>
+                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
+                                    {t("fields.roles")}
+                                </TableCell>
+                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
+                                    {t("fields.stores")}
+                                </TableCell>
+                                <TableCell sx={{fontWeight: "bold", color: "text.primary"}}>
+                                    {t("fields.actions")}
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {users.map((user) => (
+                                <TableRow
+                                    key={user.id}
+                                    hover
+                                    sx={{
+                                        backgroundColor: "background.default",
+                                        "&:hover": {
+                                            backgroundColor: "action.hover",
+                                        },
+                                        borderBottom: (theme) =>
+                                            `1px solid ${theme.palette.divider}`,
+                                    }}
+                                >
+                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
+                                        {user.username}
+                                    </TableCell>
+                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
+                                        {user.email}
+                                    </TableCell>
+                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
+                                        {user.roles.map((r) => t(`rolesDisplay.${r.name}`)).join(", ")}
+
+                                    </TableCell>
+                                    <TableCell sx={{color: "text.primary", fontSize: "0.95rem"}}>
+                                        {user.stores.map((s) => s.name).join(", ")}
+                                    </TableCell>
+                                    <TableCell>
+                                        <IconButton
+                                            onClick={() => setFormDialog({open: true, userToEdit: user})}
+                                            color="primary"
+                                        >
+                                            <EditIcon/>
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => deleteUser(user.id)}
+                                            color="error"
+                                        >
+                                            <DeleteIcon/>
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
             )}
+
             <UserFormDialog
                 open={formDialog.open}
                 onClose={() => setFormDialog({open: false, userToEdit: null})}

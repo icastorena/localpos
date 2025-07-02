@@ -32,10 +32,18 @@
   "errors": {
     "usernameRequired": "Username is required",
     "passwordRequired": "Password is required",
+    "passwordStrong": "Password must be at least 8 characters and include uppercase, lowercase, number and special character.",
     "emailRequired": "Email is required",
     "emailInvalid": "Email is invalid",
     "rolesRequired": "At least one role is required",
     "storesRequired": "At least one store is required"
+  },
+  "rolesDisplay": {
+    "OWNER": "Owner",
+    "ADMIN": "Administrator",
+    "MANAGER": "Manager",
+    "CASHIER": "Cashier",
+    "WAITER": "Waiter"
   },
   "helpers": {
     "leaveBlankToKeepPassword": "Leave blank to keep the current password"

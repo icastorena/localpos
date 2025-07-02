@@ -32,10 +32,18 @@
   "errors": {
     "usernameRequired": "El nombre de usuario es obligatorio",
     "passwordRequired": "La contraseña es obligatoria",
+    "passwordStrong": "La contraseña debe tener al menos 8 caracteres e incluir mayúscula, minúscula, número y carácter especial.",
     "emailRequired": "El correo electrónico es obligatorio",
     "emailInvalid": "El correo electrónico no es válido",
     "rolesRequired": "Se requiere al menos un rol",
     "storesRequired": "Se requiere al menos una tienda"
+  },
+  "rolesDisplay": {
+    "OWNER": "Propietario",
+    "MANAGER": "Gerente",
+    "ADMIN": "Administrador",
+    "CASHIER": "Cajero",
+    "WAITER": "Mesero"
   },
   "helpers": {
     "leaveBlankToKeepPassword": "Deja vacío para mantener la contraseña actual"
