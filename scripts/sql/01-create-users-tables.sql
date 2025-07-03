@@ -1,13 +1,21 @@
--- ========================================
--- Tables for Users Microservice (Schema: users)
--- ========================================
+-- ================================
+-- Schema: users
+-- ================================
 
+CREATE SCHEMA IF NOT EXISTS users;
+
+-- ========================================
+-- Roles Table
+-- ========================================
 CREATE TABLE IF NOT EXISTS users.roles (
     id          VARCHAR(36) PRIMARY KEY,
     name        VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255)
 );
 
+-- ========================================
+-- Users Table
+-- ========================================
 CREATE TABLE IF NOT EXISTS users.users (
     id           VARCHAR(36) PRIMARY KEY,
     username     VARCHAR(100) NOT NULL UNIQUE,
@@ -22,6 +30,9 @@ CREATE TABLE IF NOT EXISTS users.users (
     updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ========================================
+-- User-Roles Join Table
+-- ========================================
 CREATE TABLE IF NOT EXISTS users.user_roles (
     user_id VARCHAR(36) NOT NULL,
     role_id VARCHAR(36) NOT NULL,
@@ -30,6 +41,9 @@ CREATE TABLE IF NOT EXISTS users.user_roles (
     CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES users.roles (id)
 );
 
+-- ========================================
+-- Stores Table
+-- ========================================
 CREATE TABLE IF NOT EXISTS users.stores (
     id         VARCHAR(36) PRIMARY KEY,
     code       VARCHAR(4) NOT NULL UNIQUE,
@@ -39,6 +53,9 @@ CREATE TABLE IF NOT EXISTS users.stores (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ========================================
+-- User-Stores Join Table
+-- ========================================
 CREATE TABLE IF NOT EXISTS users.user_stores (
     user_id  VARCHAR(36) NOT NULL,
     store_id VARCHAR(36) NOT NULL,
@@ -47,7 +64,9 @@ CREATE TABLE IF NOT EXISTS users.user_stores (
     CONSTRAINT fk_user_stores_store FOREIGN KEY (store_id) REFERENCES users.stores (id)
 );
 
+-- ========================================
 -- Indexes
+-- ========================================
 CREATE INDEX IF NOT EXISTS idx_users_username ON users.users (username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users.users (email);
 CREATE INDEX IF NOT EXISTS idx_roles_name ON users.roles (name);
