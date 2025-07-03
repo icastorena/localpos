@@ -11,8 +11,9 @@ class StoreServiceImpl(
     private val storeRepository: StoreRepository
 ) : StoreService {
 
-    override fun getAllStores(): List<StoreDTO> {
+    override fun getAllStores(): Set<StoreDTO> {
         return storeRepository.findAll()
             .map { it.toDTO() }
+            .toSet()
     }
 }

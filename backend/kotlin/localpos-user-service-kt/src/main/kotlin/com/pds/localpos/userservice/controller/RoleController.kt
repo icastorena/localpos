@@ -14,7 +14,7 @@ class RoleController(
 ) {
 
     @GetMapping
-    fun getAllRoles(): ResponseEntity<List<RoleDTO>> {
+    fun getAllRoles(): ResponseEntity<Set<RoleDTO>> {
         val roles = roleService.getAllRoles()
         return ResponseEntity.ok(roles)
     }

@@ -27,6 +27,12 @@ public class UserMapper {
         user.setEmail(dto.email());
         user.setStores(stores != null ? stores : Collections.emptySet());
         user.setRoles(roles != null ? roles : Collections.emptySet());
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setPhone(dto.phone());
+        user.setAddress(dto.address());
+        user.setActive(dto.isActive());
+
         return user;
     }
 
@@ -42,6 +48,11 @@ public class UserMapper {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPhone(),
+                user.getAddress(),
+                user.isActive(),
                 storesDTO,
                 rolesDTO,
                 user.getCreatedAt(),
@@ -55,13 +66,7 @@ public class UserMapper {
         }
 
         return stores.stream()
-                .map(store -> new StoreDTO(
-                        store.getId(),
-                        store.getCode(),
-                        store.getName(),
-                        store.getAddress(),
-                        store.getCreatedAt(),
-                        store.getUpdatedAt()))
+                .map(StoreMapper::toDTO)
                 .collect(Collectors.toSet());
     }
 
@@ -71,10 +76,7 @@ public class UserMapper {
         }
 
         return roles.stream()
-                .map(role -> new RoleDTO(
-                        role.getId(),
-                        role.getName(),
-                        role.getDescription()))
+                .map(RoleMapper::toDTO)
                 .collect(Collectors.toSet());
     }
 }

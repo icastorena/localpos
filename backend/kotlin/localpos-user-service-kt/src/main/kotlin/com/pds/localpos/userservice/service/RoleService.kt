@@ -4,5 +4,5 @@ import com.pds.localpos.userservice.dto.RoleDTO
 
 interface RoleService {
 
-    fun getAllRoles(): List<RoleDTO>
+    fun getAllRoles(): Set<RoleDTO>
 }

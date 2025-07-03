@@ -20,6 +20,7 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -34,8 +35,8 @@ import java.util.Set;
 public class User {
 
     @Id
-    @Column(length = 36)
-    private String id;
+    @Column(length = 36, nullable = false, updatable = false)
+    private String id = UUID.randomUUID().toString();
 
     @Column(nullable = false, unique = true, length = 100)
     private String username;
@@ -45,6 +46,21 @@ public class User {
 
     @Column(unique = true, length = 150)
     private String email;
+
+    @Column(name = "first_name", nullable = false, length = 100)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 100)
+    private String lastName;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -75,21 +91,19 @@ public class User {
     @PrePersist
     protected void onCreate() {
         Instant now = Instant.now();
-        createdAt = now;
-        updatedAt = now;
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || org.hibernate.Hibernate.getClass(this) != org.hibernate.Hibernate.getClass(o)) {
-            return false;
-        }
+        if (o == null || org.hibernate.Hibernate.getClass(this) != org.hibernate.Hibernate.getClass(o)) return false;
         User user = (User) o;
         return id != null && id.equals(user.id);
     }
@@ -104,6 +118,11 @@ public class User {
         return "User(id=" + id +
                 ", username=" + username +
                 ", email=" + email +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", phone=" + phone +
+                ", address=" + address +
+                ", isActive=" + isActive +
                 ", storesCount=" + (stores != null ? stores.size() : 0) +
                 ", rolesCount=" + (roles != null ? roles.size() : 0) +
                 ", createdAt=" + createdAt +

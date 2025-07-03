@@ -14,7 +14,7 @@ class StoreController(
 ) {
 
     @GetMapping
-    fun getAllStores(): ResponseEntity<List<StoreDTO>> {
+    fun getAllStores(): ResponseEntity<Set<StoreDTO>> {
         val stores = storeService.getAllStores()
         return ResponseEntity.ok(stores)
     }

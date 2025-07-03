@@ -50,9 +50,6 @@ class UserServiceImpl(
 
     override fun getAllUsers(): List<UserResponseDTO> =
         userRepository.findAll()
-            .filter { user ->
-                user.roles.none { RoleName.OWNER == it.name || RoleName.ADMIN == it.name }
-            }
             .map { it.toResponseDTO() }
 
     override fun updateUser(id: String, dto: UserRequestDTO): UserResponseDTO {
@@ -144,7 +141,9 @@ class UserServiceImpl(
 
 
     private fun validateAndGetStores(codes: Set<String>): Set<Store> {
-        if (codes.isEmpty()) return emptySet()
+        if (codes.isEmpty()) {
+            return emptySet()
+        }
 
         val stores = storeRepository.findByCodeIn(codes)
         val foundCodes = stores.map { it.code }.toSet()
