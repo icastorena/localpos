@@ -20,7 +20,8 @@
     "stores": "Sucursales",
     "actions": "Acciones",
     "active": "Activo",
-    "inactive": "Inactivo"
+    "inactive": "Inactivo",
+    "activeStatus": "Estatus activo"
   },
   "dialogs": {
     "confirmDeleteTitle": "Confirmar Eliminación",
@@ -45,7 +46,8 @@
     "rolesRequired": "Se requiere al menos un rol",
     "storesRequired": "Se requiere al menos una tienda",
     "firstNameRequired": "El nombre es obligatorio",
-    "lastNameRequired": "El apellido es obligatorio"
+    "lastNameRequired": "El apellido es obligatorio",
+    "activeStatusRequired": "Debe especificar el estatus activo."
   },
   "rolesDisplay": {
     "OWNER": "Propietario",

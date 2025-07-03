@@ -1,10 +1,10 @@
 import React from "react";
 import {useIdleTimer} from "react-idle-timer";
 import {useNavigate} from "react-router-dom";
-import Swal from "sweetalert2";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "../context/useAuth";
+import DarkSwal from "../utils/darkSwal.ts";
 
 const AutoLogout: React.FC = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const AutoLogout: React.FC = () => {
     const handleOnIdle = async () => {
         logout();
 
-        await Swal.fire({
+        await DarkSwal.fire({
             icon: "warning",
             title: t("title", "Session expired"),
             text: t("message", "You have been logged out due to inactivity."),

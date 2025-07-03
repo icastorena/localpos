@@ -1,13 +1,21 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,} from "@mui/material";
+import {
+    Autocomplete,
+    Box,
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    TextField,
+} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import axios from "axios";
 import {Field, FieldProps, Form, Formik, FormikHelpers} from "formik";
 import * as Yup from "yup";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-
-const MySwal = withReactContent(Swal);
+import DarkSwal from "../utils/darkSwal.ts";
 
 interface UserFormDialogProps {
     open: boolean;
@@ -56,6 +64,7 @@ interface FormValues {
     address: string;
     roles: Role[];
     stores: Store[];
+    isActive: boolean;
 }
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -87,7 +96,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 setAllRoles(rolesRes.data);
                 setAllStores(storesRes.data);
             } catch {
-                MySwal.fire({icon: "error", title: t("messages.errorLoading")});
+                await DarkSwal.fire({icon: "error", title: t("messages.errorLoading")});
             }
         };
         fetchRolesStores();
@@ -104,6 +113,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
             address: "",
             roles: [],
             stores: [],
+            isActive: true,
         };
 
         if (!userToEdit || !allRoles.length || !allStores.length) return empty;
@@ -116,8 +126,13 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
             lastName: userToEdit.lastName || "",
             phone: userToEdit.phone || "",
             address: userToEdit.address || "",
-            roles: allRoles.filter((r) => userToEdit.roles.some((ur) => ur.name === r.name)),
-            stores: allStores.filter((s) => userToEdit.stores.some((us) => us.name === s.name)),
+            roles: allRoles.filter((r) =>
+                userToEdit.roles.some((ur) => ur.name === r.name)
+            ),
+            stores: allStores.filter((s) =>
+                userToEdit.stores.some((us) => us.name === s.name)
+            ),
+            isActive: userToEdit.isActive,
         };
     }, [userToEdit, allRoles, allStores]);
 
@@ -137,6 +152,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
             }),
         roles: Yup.array().min(1, t("errors.rolesRequired")),
         stores: Yup.array().min(1, t("errors.storesRequired")),
+        isActive: Yup.boolean().required(t("errors.activeStatusRequired")),
     });
 
     const handleSubmit = async (
@@ -153,6 +169,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 address: values.address,
                 roleNames: values.roles.map((r) => r.name),
                 storeCodes: values.stores.map((s) => s.code),
+                isActive: values.isActive,
             };
             if (!userToEdit && values.password) payload.password = values.password;
 
@@ -166,13 +183,13 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
 
             onSaved(res.data);
             onClose();
-            await MySwal.fire({
+            await DarkSwal.fire({
                 icon: "success",
                 title: userToEdit ? t("messages.userUpdated") : t("messages.userCreated"),
             });
         } catch (error: any) {
             const message = error?.response?.data?.message || error.message || t("messages.errorSaving");
-            await MySwal.fire({icon: "error", title: message});
+            await DarkSwal.fire({icon: "error", title: message});
             setErrors({username: message});
         } finally {
             setSubmitting(false);
@@ -256,15 +273,23 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                                 </Field>
 
                                 <Field name="phone">
-                                    {({field}: FieldProps) => (
-                                        <TextField label={t("fields.phone")} fullWidth {...field} />
-                                    )}
+                                    {({field}: FieldProps) => <TextField label={t("fields.phone")}
+                                                                         fullWidth {...field} />}
                                 </Field>
 
                                 <Field name="address">
                                     {({field}: FieldProps) => (
                                         <TextField label={t("fields.address")} fullWidth multiline
                                                    rows={2} {...field} />
+                                    )}
+                                </Field>
+
+                                <Field name="isActive">
+                                    {({field}: FieldProps) => (
+                                        <FormControlLabel
+                                            control={<Checkbox {...field} checked={field.value}/>}
+                                            label={t("fields.activeStatus")}
+                                        />
                                     )}
                                 </Field>
 

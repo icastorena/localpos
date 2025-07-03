@@ -20,7 +20,8 @@
     "stores": "Stores",
     "actions": "Actions",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "activeStatus": "Active Status"
   },
   "dialogs": {
     "confirmDeleteTitle": "Confirm Delete",
@@ -45,7 +46,8 @@
     "rolesRequired": "At least one role is required",
     "storesRequired": "At least one store is required",
     "firstNameRequired": "First name is required",
-    "lastNameRequired": "Last name is required"
+    "lastNameRequired": "Last name is required",
+    "activeStatusRequired": "Active status must be specified."
   },
   "rolesDisplay": {
     "OWNER": "Owner",

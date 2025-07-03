@@ -16,11 +16,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import {useTranslation} from "react-i18next";
 import axios from "axios";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import UserFormDialog from "../components/UserFormDialog";
-
-const MySwal = withReactContent(Swal);
+import DarkSwal from "../utils/darkSwal.ts";
 
 interface User {
     id: string;
@@ -60,7 +57,7 @@ const Users: React.FC = () => {
             });
             setUsers(response.data);
         } catch {
-            MySwal.fire({
+            DarkSwal.fire({
                 icon: "error",
                 title: t("messages.errorLoading"),
             });
@@ -70,7 +67,7 @@ const Users: React.FC = () => {
     };
 
     const deleteUser = async (id: string) => {
-        const result = await MySwal.fire({
+        const result = await DarkSwal.fire({
             title: t("dialogs.confirmDeleteTitle"),
             text: t("dialogs.confirmDeleteMessage"),
             icon: "warning",
@@ -84,9 +81,9 @@ const Users: React.FC = () => {
                     headers: {Authorization: `Bearer ${token}`},
                 });
                 setUsers((prev) => prev.filter((u) => u.id !== id));
-                MySwal.fire({icon: "success", title: t("messages.userDeleted")});
+                DarkSwal.fire({icon: "success", title: t("messages.userDeleted")});
             } catch {
-                MySwal.fire({icon: "error", title: t("messages.errorDeleting")});
+                DarkSwal.fire({icon: "error", title: t("messages.errorDeleting")});
             }
         }
     };
@@ -99,7 +96,7 @@ const Users: React.FC = () => {
             }
             return [...prev, savedUser];
         });
-        MySwal.fire({
+        DarkSwal.fire({
             icon: "success",
             title: savedUser.id
                 ? t("messages.userUpdated")
