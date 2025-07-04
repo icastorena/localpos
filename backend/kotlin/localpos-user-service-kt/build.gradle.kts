@@ -40,6 +40,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:${property("jjwt.version")}")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:${property("jjwt.version")}")
 
+    // Logback encoder for JSON logs
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+
     // Database Driver
     runtimeOnly("org.postgresql:postgresql")
 
