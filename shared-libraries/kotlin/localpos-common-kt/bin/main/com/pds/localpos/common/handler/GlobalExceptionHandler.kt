@@ -5,6 +5,7 @@ import com.pds.localpos.common.i18n.ErrorMessageResolver
 import com.pds.localpos.common.model.InternalApplicationError
 import com.pds.localpos.common.util.CorrelationIdHolder
 import jakarta.validation.ConstraintViolationException
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
@@ -23,87 +24,78 @@ class GlobalExceptionHandler(
     private val defaultLocale: Locale
 ) {
 
-    private fun currentTimestamp(): String =
-        DateTimeFormatter.ISO_OFFSET_DATE_TIME
-            .withZone(ZoneId.systemDefault())
-            .format(Instant.now())
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     @ExceptionHandler(ApiException::class)
-    fun handleApiException(ex: ApiException): ResponseEntity<InternalApplicationError> {
+    fun handleApiException(ex: ApiException): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
         val message = errorMessageResolver.resolveMessage(ex.message ?: "", defaultLocale, *ex.messageParams)
-        val error = InternalApplicationError(
-            correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = ex.status.name,
-            message = message
-        )
-        return ResponseEntity(error, ex.status)
+        logger.warn("API Exception [{}]: {} - {}", correlationId, ex.status, message, ex)
+        return buildErrorResponse(ex.status, correlationId, message)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): ResponseEntity<InternalApplicationError> {
+    fun handleMethodArgumentNotValid(ex: MethodArgumentNotValidException): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
         val message = ex.bindingResult.fieldErrors
             .map { errorMessageResolver.resolveMessage(it.defaultMessage ?: "", defaultLocale) }
             .firstOrNull() ?: "Validation error"
-        val error = InternalApplicationError(
-            correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = HttpStatus.BAD_REQUEST.name,
-            message = message
-        )
-        return ResponseEntity(error, HttpStatus.BAD_REQUEST)
+
+        logger.warn("Validation failed [{}]: {}", correlationId, message, ex)
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, correlationId, message)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<InternalApplicationError> {
+    fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
         val message = ex.constraintViolations
             .map { errorMessageResolver.resolveMessage(it.message, defaultLocale) }
             .firstOrNull() ?: "Validation error"
-        val error = InternalApplicationError(
-            correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = HttpStatus.BAD_REQUEST.name,
-            message = message
-        )
-        return ResponseEntity(error, HttpStatus.BAD_REQUEST)
+
+        logger.warn("Constraint violation [{}]: {}", correlationId, message, ex)
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, correlationId, message)
     }
 
     @ExceptionHandler(AuthorizationDeniedException::class)
-    fun handleAuthorizationDeniedException(ex: AuthorizationDeniedException): ResponseEntity<InternalApplicationError> {
+    fun handleAuthorizationDeniedException(ex: AuthorizationDeniedException): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
-        val error = InternalApplicationError(
-            correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = HttpStatus.FORBIDDEN.name,
-            message = "You do not have permission to perform this action."
-        )
-        return ResponseEntity(error, HttpStatus.FORBIDDEN)
+        val message = "You do not have permission to perform this action."
+        logger.warn("Authorization denied [{}]: {}", correlationId, ex.message, ex)
+        return buildErrorResponse(HttpStatus.FORBIDDEN, correlationId, message)
     }
 
     @ExceptionHandler(BadCredentialsException::class)
-    fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<InternalApplicationError> {
+    fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
-        val error = InternalApplicationError(
-            correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = HttpStatus.UNAUTHORIZED.name,
-            message = ex.message ?: "Invalid credentials"
-        )
-        return ResponseEntity(error, HttpStatus.UNAUTHORIZED)
+        val message = ex.message ?: "Invalid credentials"
+        logger.warn("Bad credentials [{}]: {}", correlationId, message, ex)
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, correlationId, message)
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(ex: Exception): ResponseEntity<InternalApplicationError> {
+    fun handleGenericException(ex: Exception): ResponseEntity<Any> {
         val correlationId = CorrelationIdHolder.get()
+        val message = "Unexpected error: ${ex.message ?: "Unknown"}"
+        logger.error("Unhandled exception [{}]: {}", correlationId, ex.message, ex)
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, correlationId, message)
+    }
+
+    private fun buildErrorResponse(
+        status: HttpStatus,
+        correlationId: String,
+        message: String
+    ): ResponseEntity<Any> {
+        val timestamp = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+            .withZone(ZoneId.systemDefault())
+            .format(Instant.now())
+
         val error = InternalApplicationError(
             correlationId = correlationId,
-            timestamp = currentTimestamp(),
-            errorCode = HttpStatus.INTERNAL_SERVER_ERROR.name,
-            message = ex.message ?: "Unexpected error"
+            timestamp = timestamp,
+            errorCode = status.name,
+            message = message
         )
-        return ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR)
+
+        return ResponseEntity(error, status)
     }
 }
