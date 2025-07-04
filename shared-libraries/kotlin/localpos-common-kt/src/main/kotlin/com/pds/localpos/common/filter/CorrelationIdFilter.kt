@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import java.io.IOException
 import java.util.*
@@ -26,8 +27,10 @@ class CorrelationIdFilter : Filter {
 
             CorrelationIdHolder.set(correlationId)
             chain.doFilter(request, response)
+            MDC.put("correlationId", correlationId)
         } finally {
             CorrelationIdHolder.clear()
+            MDC.clear()
         }
     }
 }
