@@ -3,9 +3,9 @@ package com.pds.localpos.userservice.mapper;
 import com.pds.localpos.userservice.dto.RoleDTO;
 import com.pds.localpos.userservice.model.Role;
 import com.pds.localpos.userservice.model.RoleName;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
-@Component
+@UtilityClass
 public class RoleMapper {
 
     public static RoleDTO toDTO(Role role) {

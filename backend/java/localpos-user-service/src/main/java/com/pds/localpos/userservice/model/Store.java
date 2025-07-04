@@ -18,6 +18,7 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -31,7 +32,8 @@ import java.util.Set;
 public class Store {
 
     @Id
-    private String id;
+    @Column(length = 36, nullable = false, updatable = false)
+    private String id = UUID.randomUUID().toString();
 
     @Column(nullable = false, unique = true, length = 4)
     private String code;

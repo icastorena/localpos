@@ -7,13 +7,13 @@ import com.pds.localpos.userservice.dto.UserResponseDTO;
 import com.pds.localpos.userservice.model.Role;
 import com.pds.localpos.userservice.model.Store;
 import com.pds.localpos.userservice.model.User;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@UtilityClass
 public class UserMapper {
 
     public static User toEntity(UserRequestDTO dto, Set<Store> stores, Set<Role> roles) {

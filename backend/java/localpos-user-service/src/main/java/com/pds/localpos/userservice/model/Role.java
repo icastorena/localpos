@@ -18,6 +18,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -31,7 +32,8 @@ import java.util.Set;
 public class Role {
 
     @Id
-    private String id;
+    @Column(length = 36, nullable = false, updatable = false)
+    private String id = UUID.randomUUID().toString();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true, length = 50)
