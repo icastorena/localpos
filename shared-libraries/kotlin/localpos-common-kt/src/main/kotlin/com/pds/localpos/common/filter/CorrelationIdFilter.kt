@@ -26,8 +26,8 @@ class CorrelationIdFilter : Filter {
                 ?: UUID.randomUUID().toString()
 
             CorrelationIdHolder.set(correlationId)
-            chain.doFilter(request, response)
             MDC.put("correlationId", correlationId)
+            chain.doFilter(request, response)
         } finally {
             CorrelationIdHolder.clear()
             MDC.clear()
