@@ -20,6 +20,9 @@ spring:
 
 app:
   locale: en
+  cors:
+    allowed-origins:
+      - http://localhost:5173
 
 security:
   jwt:

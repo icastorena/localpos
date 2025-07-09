@@ -9,6 +9,6 @@ import java.util.Set;
 public interface StoreRepository extends JpaRepository<Store, String> {
 
     Set<Store> findByCodeIn(Set<String> codes);
-    
+
     Optional<Store> findByCode(String code);
 }

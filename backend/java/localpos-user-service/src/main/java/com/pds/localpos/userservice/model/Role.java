@@ -2,6 +2,8 @@ package com.pds.localpos.userservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
@@ -16,6 +18,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,10 +32,12 @@ import java.util.Set;
 public class Role {
 
     @Id
-    private String id;
+    @Column(length = 36, nullable = false, updatable = false)
+    private String id = UUID.randomUUID().toString();
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true, length = 50)
-    private String name;
+    private RoleName name;
 
     @Column(length = 255)
     private String description;

@@ -1,0 +1,271 @@
+openapi: 3.0.3
+info:
+  title: LocalPOS User Service API
+  version: 1.0.0
+  description: |
+    This API manages users, roles, and authentication for the LocalPOS system.
+    It supports CRUD operations on users and login validation.
+    All endpoints except the user validation require JWT Bearer authentication.
+
+servers:
+  - url: '{base_url}/api/v1'
+    description: Base URL for API requests. Can be overridden in client tools.
+    variables:
+      base_url:
+        default: 'http://localhost:8080'
+        description: Base URL of the User Service API
+
+security:
+  - bearerAuth: []
+
+paths:
+  /users:
+    get:
+      summary: Retrieve all users
+      description: Returns a list of all users. Requires roles OWNER or ADMIN.
+      responses:
+        '200':
+          description: A list of user objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponseDTO'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Create a new user
+      description: Creates a user. Requires roles OWNER, ADMIN, or MANAGER.
+      requestBody:
+        description: User details to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+      responses:
+        '200':
+          description: Created user object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+      security:
+        - bearerAuth: []
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The user ID (UUID as string)
+        schema:
+          type: string
+    get:
+      summary: Retrieve a user by ID
+      description: Returns user details by ID. Requires roles OWNER, ADMIN, or MANAGER.
+      responses:
+        '200':
+          description: User details object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+      security:
+        - bearerAuth: []
+    put:
+      summary: Update an existing user
+      description: Updates user information. Requires roles OWNER, ADMIN, or MANAGER.
+      requestBody:
+        description: User details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+      responses:
+        '200':
+          description: Updated user object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+      security:
+        - bearerAuth: []
+    delete:
+      summary: Delete a user
+      description: Deletes user by ID. Requires roles OWNER or ADMIN.
+      responses:
+        '204':
+          description: User successfully deleted (no content)
+      security:
+        - bearerAuth: []
+
+  /users/auth/validate:
+    post:
+      summary: Validate user credentials
+      description: Validates username and password. This endpoint does NOT require authentication.
+      requestBody:
+        description: Credentials for validation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+      responses:
+        '200':
+          description: User details if credentials are valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+      security: []  # No authentication required
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequestDTO:
+      type: object
+      description: Login credentials for authentication
+      properties:
+        username:
+          type: string
+          example: "john.doe"
+        password:
+          type: string
+          format: password
+          example: "P@ssw0rd!"
+      required:
+        - username
+        - password
+
+    RoleDTO:
+      type: object
+      description: Role assigned to a user
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        name:
+          type: string
+          example: "ADMIN"
+        description:
+          type: string
+          nullable: true
+          example: "Administrator with full permissions"
+      required:
+        - id
+        - name
+
+    StoreDTO:
+      type: object
+      description: Store information related to a user
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "9fa85f64-5717-4562-b3fc-2c963f66afa7"
+        code:
+          type: string
+          example: "NYC1"
+        name:
+          type: string
+          example: "New York Downtown"
+        address:
+          type: string
+          nullable: true
+          example: "123 Main St, New York, NY"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-01T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-06-01T12:00:00Z"
+      required:
+        - id
+        - code
+        - name
+        - createdAt
+        - updatedAt
+
+    UserRequestDTO:
+      type: object
+      description: Data required to create or update a user
+      properties:
+        username:
+          type: string
+          example: "john.doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        password:
+          type: string
+          format: password
+          example: "P@ssw0rd!"
+        storeCodes:
+          type: array
+          description: List of store codes assigned to the user
+          items:
+            type: string
+            example: "NYC1"
+        roleNames:
+          type: array
+          description: List of role names assigned to the user
+          items:
+            type: string
+            example: "ADMIN"
+      required:
+        - username
+        - email
+        - password
+        - storeCodes
+        - roleNames
+
+    UserResponseDTO:
+      type: object
+      description: Returned user data with roles and stores
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "1e7e5f64-1234-4567-8910-abcdef123456"
+        username:
+          type: string
+          example: "john.doe"
+        email:
+          type: string
+          nullable: true
+          example: "john.doe@example.com"
+        stores:
+          type: array
+          description: Stores associated with the user
+          items:
+            $ref: '#/components/schemas/StoreDTO'
+        roles:
+          type: array
+          description: Roles assigned to the user
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-01T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-06-01T12:00:00Z"
+      required:
+        - id
+        - username
+        - createdAt
+        - updatedAt

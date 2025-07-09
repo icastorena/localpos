@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: LocalPOS Product Service API
+  version: 1.0.0
+  description: |
+    This API manages products and categories for the LocalPOS system.
+    It supports CRUD operations on products and allows category linking.
+    All endpoints require JWT Bearer authentication.
+
+servers:
+  - url: '{base_url}/api/v1'
+    description: Base URL for API requests. Can be overridden in client tools.
+    variables:
+      base_url:
+        default: 'http://localhost:8080'
+        description: Base URL of the Product Service API
+
+security:
+  - bearerAuth: []
+
+paths:
+  /products:
+    get:
+      summary: Retrieve all products
+      description: Returns a list of all available products.
+      responses:
+        '200':
+          description: A list of product objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponseDTO'
+      security:
+        - bearerAuth: []
+
+    post:
+      summary: Create a new product
+      description: Creates a product with name, description, price, and category ID.
+      requestBody:
+        description: Product details to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequestDTO'
+      responses:
+        '200':
+          description: Created product object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+      security:
+        - bearerAuth: []
+
+  /products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The product ID (UUID as string)
+        schema:
+          type: string
+    get:
+      summary: Retrieve a product by ID
+      description: Returns product details for the specified ID.
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+      security:
+        - bearerAuth: []
+
+    put:
+      summary: Update an existing product
+      description: Updates product name, description, price, or category.
+      requestBody:
+        description: Product details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequestDTO'
+      responses:
+        '200':
+          description: Updated product object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+      security:
+        - bearerAuth: []
+
+    delete:
+      summary: Delete a product
+      description: Deletes a product by its ID.
+      responses:
+        '204':
+          description: Product successfully deleted (no content)
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    ProductRequestDTO:
+      type: object
+      description: Data required to create or update a product
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Coffee"
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+          example: "Fresh brewed coffee"
+        price:
+          type: number
+          format: decimal
+          example: 2.50
+        categoryId:
+          type: string
+          description: UUID of the product's category
+          example: "c9aef7db-5d9e-4a3b-b326-1c3f4d831f8b"
+      required:
+        - name
+        - price
+        - categoryId
+
+    ProductResponseDTO:
+      type: object
+      description: Returned product object with full category details
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7eaba064-6513-4b93-8568-7f1ee49d91a5"
+        name:
+          type: string
+          example: "Coffee"
+        description:
+          type: string
+          nullable: true
+          example: "Fresh brewed coffee"
+        price:
+          type: number
+          format: decimal
+          example: 2.50
+        category:
+          $ref: '#/components/schemas/CategoryDTO'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-07-03T14:22:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-07-03T14:22:30Z"
+      required:
+        - id
+        - name
+        - price
+        - category
+        - createdAt
+        - updatedAt
+
+    CategoryDTO:
+      type: object
+      description: Category details for a product
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "c9aef7db-5d9e-4a3b-b326-1c3f4d831f8b"
+        name:
+          type: string
+          example: "Beverages"
+        description:
+          type: string
+          nullable: true
+          example: "Drinks and refreshments"
+      required:
+        - id
+        - name

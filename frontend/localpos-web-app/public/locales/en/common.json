@@ -1,0 +1,11 @@
+{
+  "welcome": "Welcome, {{user}}",
+  "logout": "Logout",
+  "menu": {
+    "home": "Home",
+    "users": "Users",
+    "orders": "Orders",
+    "inventory": "Inventory",
+    "reports": "Reports"
+  }
+}

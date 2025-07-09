@@ -11,7 +11,7 @@ import java.time.Instant
 
 fun Role.toDTO() = RoleDTO(
     id = id,
-    name = name,
+    name = name.name,
     description = description
 )
 
@@ -29,8 +29,13 @@ fun UserRequestDTO.toEntity(
     roles: Set<Role>
 ): User = User(
     username = username,
-    password = password,
+    password = "",
     email = email,
+    firstName = firstName,
+    lastName = lastName,
+    phone = phone,
+    address = address,
+    isActive = isActive,
     stores = stores.toMutableSet(),
     roles = roles.toMutableSet(),
     createdAt = Instant.now(),
@@ -40,7 +45,12 @@ fun UserRequestDTO.toEntity(
 fun User.toResponseDTO(): UserResponseDTO = UserResponseDTO(
     id = id,
     username = username,
-    email = email.orEmpty(),
+    email = email,
+    firstName = firstName,
+    lastName = lastName,
+    phone = phone,
+    address = address,
+    isActive = isActive,
     stores = stores.map { it.toDTO() }.toSet(),
     roles = roles.map { it.toDTO() }.toSet(),
     createdAt = createdAt,

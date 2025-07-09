@@ -1,0 +1,62 @@
+{
+  "title": "Gestión de Usuarios",
+  "buttons": {
+    "create": "Crear",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "fields": {
+    "username": "Usuario",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "isActive": "Estatus",
+    "roles": "Roles",
+    "stores": "Sucursales",
+    "actions": "Acciones",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "activeStatus": "Estatus activo"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirmar Eliminación",
+    "confirmDeleteMessage": "¿Estás seguro de que deseas eliminar este usuario?"
+  },
+  "messages": {
+    "userCreated": "Usuario creado exitosamente",
+    "userUpdated": "Usuario actualizado exitosamente",
+    "userDeleted": "Usuario eliminado exitosamente",
+    "errorLoading": "Error al cargar usuarios",
+    "errorSaving": "Error al guardar usuario",
+    "errorDeleting": "Error al eliminar usuario",
+    "errorLoadingData": "Error al cargar datos",
+    "userSaved": "Usuario guardado exitosamente"
+  },
+  "errors": {
+    "usernameRequired": "El nombre de usuario es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "passwordStrong": "La contraseña debe tener al menos 8 caracteres e incluir mayúscula, minúscula, número y carácter especial.",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "emailInvalid": "El correo electrónico no es válido",
+    "rolesRequired": "Se requiere al menos un rol",
+    "storesRequired": "Se requiere al menos una tienda",
+    "firstNameRequired": "El nombre es obligatorio",
+    "lastNameRequired": "El apellido es obligatorio",
+    "activeStatusRequired": "Debe especificar el estatus activo."
+  },
+  "rolesDisplay": {
+    "OWNER": "Propietario",
+    "MANAGER": "Gerente",
+    "ADMIN": "Administrador",
+    "CASHIER": "Cajero",
+    "WAITER": "Mesero"
+  },
+  "helpers": {
+    "leaveBlankToKeepPassword": "Deja vacío para mantener la contraseña actual"
+  }
+}

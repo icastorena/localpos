@@ -2,9 +2,6 @@ spring:
   application:
     name: User Service
 
-  main:
-    allow-bean-definition-overriding: true
-
   datasource:
     url: jdbc:postgresql://localhost:5432/localpos_db
     username: localpos_user
@@ -20,8 +17,14 @@ spring:
 
 app:
   locale: en
+  cors:
+    allowed-origins:
+      - http://localhost:5173
 
 security:
   jwt:
     secret: ${JWT_SECRET}
     expiration-ms: 900000
+
+server:
+  port: 8082

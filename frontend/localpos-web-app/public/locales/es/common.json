@@ -1,0 +1,11 @@
+{
+  "welcome": "Bienvenido, {{user}}",
+  "logout": "Cerrar sesión",
+  "menu": {
+    "home": "Inicio",
+    "users": "Usuarios",
+    "orders": "Pedidos",
+    "inventory": "Inventario",
+    "reports": "Reportes"
+  }
+}

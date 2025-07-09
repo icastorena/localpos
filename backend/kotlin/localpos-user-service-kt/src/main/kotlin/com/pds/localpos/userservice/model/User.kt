@@ -29,6 +29,21 @@ class User(
     @Column(unique = true, length = 150)
     var email: String? = null,
 
+    @Column(name = "first_name", nullable = false, length = 100)
+    var firstName: String = "",
+
+    @Column(name = "last_name", nullable = false, length = 100)
+    var lastName: String = "",
+
+    @Column(length = 20)
+    var phone: String? = null,
+
+    @Column(columnDefinition = "TEXT")
+    var address: String? = null,
+
+    @Column(name = "is_active", nullable = false)
+    var isActive: Boolean = true,
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_stores",
@@ -78,6 +93,6 @@ class User(
     override fun hashCode(): Int = id.hashCode()
 
     override fun toString(): String {
-        return "User(id=$id, username=$username, email=$email, storesCount=${stores.size}, rolesCount=${roles.size}, createdAt=$createdAt, updatedAt=$updatedAt)"
+        return "User(id=$id, username=$username, email=$email, firstName=$firstName, lastName=$lastName, phone=$phone, address=$address, isActive=$isActive, storesCount=${stores.size}, rolesCount=${roles.size}, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

@@ -2,9 +2,10 @@ package com.pds.localpos.userservice.mapper;
 
 import com.pds.localpos.userservice.dto.StoreDTO;
 import com.pds.localpos.userservice.model.Store;
+import lombok.experimental.UtilityClass;
 import org.springframework.stereotype.Component;
 
-@Component
+@UtilityClass
 public class StoreMapper {
 
     public static StoreDTO toDTO(Store store) {

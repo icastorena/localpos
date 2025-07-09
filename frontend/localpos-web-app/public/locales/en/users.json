@@ -1,0 +1,62 @@
+{
+  "title": "Users Management",
+  "buttons": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "fields": {
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "address": "Address",
+    "isActive": "Status",
+    "roles": "Roles",
+    "stores": "Stores",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activeStatus": "Active Status"
+  },
+  "dialogs": {
+    "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete this user?"
+  },
+  "messages": {
+    "userCreated": "User created successfully",
+    "userUpdated": "User updated successfully",
+    "userDeleted": "User deleted successfully",
+    "errorLoading": "Error loading users",
+    "errorSaving": "Error saving user",
+    "errorDeleting": "Error deleting user",
+    "errorLoadingData": "Error loading data",
+    "userSaved": "User saved successfully"
+  },
+  "errors": {
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "passwordStrong": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is invalid",
+    "rolesRequired": "At least one role is required",
+    "storesRequired": "At least one store is required",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "activeStatusRequired": "Active status must be specified."
+  },
+  "rolesDisplay": {
+    "OWNER": "Owner",
+    "ADMIN": "Administrator",
+    "MANAGER": "Manager",
+    "CASHIER": "Cashier",
+    "WAITER": "Waiter"
+  },
+  "helpers": {
+    "leaveBlankToKeepPassword": "Leave blank to keep the current password"
+  }
+}

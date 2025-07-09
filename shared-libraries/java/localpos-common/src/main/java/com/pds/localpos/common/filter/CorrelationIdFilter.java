@@ -7,12 +7,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class CorrelationIdFilter implements Filter {
 
@@ -28,9 +31,11 @@ public class CorrelationIdFilter implements Filter {
                     .orElse(UUID.randomUUID().toString());
 
             CorrelationIdHolder.set(correlationId);
+            MDC.put("correlationId", correlationId);
             chain.doFilter(request, response);
         } finally {
             CorrelationIdHolder.clear();
+            MDC.clear();
         }
     }
 }

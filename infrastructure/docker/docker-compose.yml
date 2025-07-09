@@ -1,5 +1,5 @@
 services:
-  postgres:
+  localpos-db:
     image: postgres:15
     container_name: localpos-db
     environment:
@@ -10,7 +10,55 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - localpos-network
     restart: unless-stopped
+
+  db-init:
+    image: postgres:15
+    depends_on:
+      - localpos-db
+    volumes:
+      - ../../scripts:/scripts
+    networks:
+      - localpos-network
+    entrypoint: ["/bin/bash", "/scripts/init_db.sh"]
+    environment:
+      PGUSER: localpos_user
+      PGPASSWORD: localpos_pass
+    restart: "no"
+
+  localpos-user-service:
+    build:
+      context: ../../backend/java/localpos-user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localpos-db:5432/localpos_db
+      SPRING_DATASOURCE_USERNAME: localpos_user
+      SPRING_DATASOURCE_PASSWORD: localpos_pass
+      JWT_SECRET: I/O/UftKrK+1AyAVl0fg8g1Brqxvq5yO8g5mIULAa2M=
+    networks:
+      - localpos-network
+    depends_on:
+      - localpos-db
+      - db-init
+
+  localpos-auth-service:
+    build:
+      context: ../../backend/kotlin/localpos-auth-service-kt
+    ports:
+      - "8081:8081"
+    environment:
+      JWT_SECRET: I/O/UftKrK+1AyAVl0fg8g1Brqxvq5yO8g5mIULAa2M=
+    networks:
+      - localpos-network
+    depends_on:
+      - localpos-user-service
+
+networks:
+  localpos-network:
+    driver: bridge
 
 volumes:
   pgdata:
