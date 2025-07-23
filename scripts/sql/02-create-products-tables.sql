@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS products.categories (
 
 CREATE TABLE IF NOT EXISTS products.products (
     id          VARCHAR(36) PRIMARY KEY,
+    sku         VARCHAR(50) NOT NULL UNIQUE,
+    barcode     VARCHAR(20) NOT NULL UNIQUE,
     name        VARCHAR(255) NOT NULL,
     description TEXT,
     price       DECIMAL(12, 2) NOT NULL,
@@ -35,3 +37,5 @@ CREATE TABLE IF NOT EXISTS products.products (
 -- ========================================
 CREATE INDEX IF NOT EXISTS idx_products_name ON products.products (name);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products.products (category_id);
+CREATE INDEX IF NOT EXISTS idx_products_sku ON products.products (sku);
+CREATE INDEX IF NOT EXISTS idx_products_barcode ON products.products (barcode);
