@@ -1,9 +1,9 @@
 package com.pds.localpos.userservice.mapper;
 
-import com.pds.localpos.userservice.dto.RoleDTO;
-import com.pds.localpos.userservice.dto.StoreDTO;
-import com.pds.localpos.userservice.dto.UserRequestDTO;
-import com.pds.localpos.userservice.dto.UserResponseDTO;
+import com.pds.localpos.userservice.dto.response.RoleResponse;
+import com.pds.localpos.userservice.dto.response.StoreResponse;
+import com.pds.localpos.userservice.dto.request.UserRequest;
+import com.pds.localpos.userservice.dto.response.UserResponse;
 import com.pds.localpos.userservice.model.Role;
 import com.pds.localpos.userservice.model.Store;
 import com.pds.localpos.userservice.model.User;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class UserMapper {
 
-    public static User toEntity(UserRequestDTO dto, Set<Store> stores, Set<Role> roles) {
+    public static User toEntity(UserRequest dto, Set<Store> stores, Set<Role> roles) {
         if (dto == null) {
             return null;
         }
@@ -36,15 +36,15 @@ public class UserMapper {
         return user;
     }
 
-    public static UserResponseDTO toDTO(User user) {
+    public static UserResponse toDTO(User user) {
         if (user == null) {
             return null;
         }
 
-        Set<StoreDTO> storesDTO = mapStores(user.getStores());
-        Set<RoleDTO> rolesDTO = mapRoles(user.getRoles());
+        Set<StoreResponse> storesDTO = mapStores(user.getStores());
+        Set<RoleResponse> rolesDTO = mapRoles(user.getRoles());
 
-        return new UserResponseDTO(
+        return new UserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -60,7 +60,7 @@ public class UserMapper {
         );
     }
 
-    private static Set<StoreDTO> mapStores(Set<Store> stores) {
+    private static Set<StoreResponse> mapStores(Set<Store> stores) {
         if (stores == null || stores.isEmpty()) {
             return Collections.emptySet();
         }
@@ -70,7 +70,7 @@ public class UserMapper {
                 .collect(Collectors.toSet());
     }
 
-    private static Set<RoleDTO> mapRoles(Set<Role> roles) {
+    private static Set<RoleResponse> mapRoles(Set<Role> roles) {
         if (roles == null || roles.isEmpty()) {
             return Collections.emptySet();
         }

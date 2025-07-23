@@ -15,6 +15,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+inventory-service:
+  url: http://localhost:8085/api/v1/inventory
+
 app:
   locale: es
   cors:
@@ -25,3 +28,6 @@ security:
   jwt:
     secret: ${JWT_SECRET}
     expiration-ms: 900000
+
+server:
+  port: 8084

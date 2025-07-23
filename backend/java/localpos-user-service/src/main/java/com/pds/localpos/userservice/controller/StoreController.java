@@ -1,6 +1,6 @@
 package com.pds.localpos.userservice.controller;
 
-import com.pds.localpos.userservice.dto.StoreDTO;
+import com.pds.localpos.userservice.dto.response.StoreResponse;
 import com.pds.localpos.userservice.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public class StoreController {
     private final StoreService storeService;
 
     @GetMapping
-    public ResponseEntity<Set<StoreDTO>> getAllStores() {
-        log.info("Fetching all stores");
-        Set<StoreDTO> stores = storeService.getAllStores();
+    public ResponseEntity<Set<StoreResponse>> getAllStores() {
+        log.info("GET /stores - Fetching all stores");
+        Set<StoreResponse> stores = storeService.getAllStores();
         log.info("Fetched {} stores", stores.size());
         return ResponseEntity.ok(stores);
     }

@@ -1,21 +1,20 @@
 package com.pds.localpos.userservice.service;
 
-import com.pds.localpos.userservice.dto.UserRequestDTO;
-import com.pds.localpos.userservice.dto.UserResponseDTO;
+import com.pds.localpos.userservice.dto.request.UserRequest;
+import com.pds.localpos.userservice.dto.response.UserResponse;
 import com.pds.localpos.userservice.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
-    UserResponseDTO createUser(UserRequestDTO dto);
+    UserResponse createUser(UserRequest dto);
 
-    UserResponseDTO getUserById(String id);
+    UserResponse getUserById(String id);
 
-    List<UserResponseDTO> getAllUsers();
+    List<UserResponse> getAllUsers();
 
-    UserResponseDTO updateUser(String id, UserRequestDTO dto);
+    UserResponse updateUser(String id, UserRequest dto);
 
     void deleteUser(String id);
 

@@ -1,9 +1,9 @@
 package com.pds.localpos.orderservice.service;
 
-import com.pds.localpos.orderservice.dto.CreateOrderRequest;
-import com.pds.localpos.orderservice.dto.OrderResponse;
-import com.pds.localpos.orderservice.dto.OrderSummaryResponse;
-import com.pds.localpos.orderservice.dto.PayOrderRequest;
+import com.pds.localpos.orderservice.dto.request.CreateOrderRequest;
+import com.pds.localpos.orderservice.dto.response.OrderResponse;
+import com.pds.localpos.orderservice.dto.response.OrderSummaryResponse;
+import com.pds.localpos.orderservice.dto.request.PayOrderRequest;
 
 import java.util.List;
 

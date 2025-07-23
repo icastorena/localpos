@@ -1,6 +1,6 @@
 package com.pds.localpos.userservice.mapper;
 
-import com.pds.localpos.userservice.dto.RoleDTO;
+import com.pds.localpos.userservice.dto.response.RoleResponse;
 import com.pds.localpos.userservice.model.Role;
 import com.pds.localpos.userservice.model.RoleName;
 import lombok.experimental.UtilityClass;
@@ -8,19 +8,19 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class RoleMapper {
 
-    public static RoleDTO toDTO(Role role) {
+    public static RoleResponse toDTO(Role role) {
         if (role == null) {
             return null;
         }
 
-        return new RoleDTO(
+        return new RoleResponse(
                 role.getId(),
                 role.getName().name(),
                 role.getDescription()
         );
     }
 
-    public static Role toEntity(RoleDTO dto) {
+    public static Role toEntity(RoleResponse dto) {
         if (dto == null) {
             return null;
         }

@@ -14,3 +14,17 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  locale: en
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 900000
+
+server:
+  port: 8085

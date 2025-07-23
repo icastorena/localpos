@@ -1,16 +1,15 @@
 package com.pds.localpos.userservice.mapper;
 
-import com.pds.localpos.userservice.dto.StoreDTO;
+import com.pds.localpos.userservice.dto.response.StoreResponse;
 import com.pds.localpos.userservice.model.Store;
 import lombok.experimental.UtilityClass;
-import org.springframework.stereotype.Component;
 
 @UtilityClass
 public class StoreMapper {
 
-    public static StoreDTO toDTO(Store store) {
+    public static StoreResponse toDTO(Store store) {
         if (store == null) return null;
-        return new StoreDTO(
+        return new StoreResponse(
                 store.getId(),
                 store.getCode(),
                 store.getName(),
@@ -20,7 +19,7 @@ public class StoreMapper {
         );
     }
 
-    public static Store toEntity(StoreDTO dto) {
+    public static Store toEntity(StoreResponse dto) {
         if (dto == null) return null;
         Store store = new Store();
         store.setId(dto.id());

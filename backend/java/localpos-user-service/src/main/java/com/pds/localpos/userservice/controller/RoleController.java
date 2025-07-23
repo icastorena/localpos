@@ -1,6 +1,6 @@
 package com.pds.localpos.userservice.controller;
 
-import com.pds.localpos.userservice.dto.RoleDTO;
+import com.pds.localpos.userservice.dto.response.RoleResponse;
 import com.pds.localpos.userservice.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public class RoleController {
     private final RoleService roleService;
 
     @GetMapping
-    public ResponseEntity<Set<RoleDTO>> getAllRoles() {
-        log.info("Fetching all roles");
-        Set<RoleDTO> roles = roleService.getAllRoles();
+    public ResponseEntity<Set<RoleResponse>> getAllRoles() {
+        log.info("GET /roles - Fetching all roles");
+        Set<RoleResponse> roles = roleService.getAllRoles();
         log.info("Fetched {} roles", roles.size());
         return ResponseEntity.ok(roles);
     }

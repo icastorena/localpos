@@ -34,6 +34,12 @@ public class Product {
     @Column(length = 36, nullable = false, updatable = false)
     private String id = UUID.randomUUID().toString();
 
+    @Column(length = 50, nullable = false, unique = true)
+    private String sku;
+
+    @Column(length = 20, nullable = false, unique = true)
+    private String barcode;
+
     @Column(nullable = false)
     private String name;
 
@@ -86,7 +92,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product(id=" + id + ", name=" + name + ", price=" + price + ")";
+        return "Product(id=" + id + ", sku=" + sku + ", barcode=" + barcode + ", name=" + name + ", price=" + price + ")";
     }
 }
 

@@ -1,7 +1,7 @@
 package com.pds.localpos.productservice.mapper;
 
-import com.pds.localpos.productservice.dto.CategoryDTO;
-import com.pds.localpos.productservice.dto.ProductResponseDTO;
+import com.pds.localpos.productservice.dto.response.CategoryResponse;
+import com.pds.localpos.productservice.dto.response.ProductResponse;
 import com.pds.localpos.productservice.model.Category;
 import com.pds.localpos.productservice.model.Product;
 import lombok.experimental.UtilityClass;
@@ -9,20 +9,22 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ProductMapper {
 
-    public static ProductResponseDTO toDTO(Product product) {
+    public static ProductResponse toDTO(Product product) {
         Category category = product.getCategory();
-        CategoryDTO categoryDTO = new CategoryDTO(
+        CategoryResponse categoryResponse = new CategoryResponse(
                 category.getId(),
                 category.getName(),
                 category.getDescription()
         );
 
-        return new ProductResponseDTO(
+        return new ProductResponse(
                 product.getId(),
+                product.getSku(),
+                product.getBarcode(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                categoryDTO,
+                categoryResponse,
                 product.getCreatedAt(),
                 product.getUpdatedAt()
         );
