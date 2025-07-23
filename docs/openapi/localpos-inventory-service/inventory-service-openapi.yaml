@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: LocalPOS Inventory Service API
+  version: 1.0.0
+  description: |
+    This API manages inventory operations such as stock updates, increases, and decreases.
+    All endpoints require JWT Bearer authentication.
+
+servers:
+  - url: http://localhost:8085/api/v1
+    description: Base URL for Inventory Service API
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Inventory
+    description: Inventory stock operations
+
+paths:
+  /inventory/{storeId}/{productId}:
+    get:
+      tags: [Inventory]
+      summary: Get inventory by store and product
+      parameters:
+        - in: path
+          name: storeId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inventory record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryResponse'
+              example:
+                id: "51bb1a58-0d26-4c1d-8262-19d28f9a236f"
+                productId: "7eaba064-6513-4b93-8568-7f1ee49d91a5"
+                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+                quantity: 100
+                status: "AVAILABLE"
+                updatedAt: "2025-07-23T12:00:00Z"
+
+  /inventory/update:
+    put:
+      tags: [Inventory]
+      summary: Update stock directly
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStockRequest'
+            example:
+              productId: "49e7c947-4c63-4c52-8f87-3a3f4b5d8c34"
+              storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+              quantity: 30
+      responses:
+        '200':
+          description: Stock updated
+
+  /inventory/decrease:
+    post:
+      tags: [Inventory]
+      summary: Decrease stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustStockRequest'
+            example:
+              productId: "2ca43245-547d-427e-81e3-7aeebdd968ec"
+              storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+              amount: 5
+      responses:
+        '204':
+          description: Stock decreased
+
+  /inventory/increase:
+    post:
+      tags: [Inventory]
+      summary: Increase stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustStockRequest'
+            example:
+              productId: "4f8d5120-04b4-4f1b-9b0b-9cfa4aef96ab"
+              storeId: "963e2cb6-8f97-4e6c-91c1-03b70f195911"
+              amount: 10
+      responses:
+        '204':
+          description: Stock increased
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AdjustStockRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+        storeId:
+          type: string
+        amount:
+          type: integer
+          minimum: 1
+      required: [productId, storeId, amount]
+
+    UpdateStockRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+        storeId:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+      required: [productId, storeId, quantity]
+
+    InventoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        productId:
+          type: string
+        storeId:
+          type: string
+        quantity:
+          type: integer
+        status:
+          type: string
+        updatedAt:
+          type: string

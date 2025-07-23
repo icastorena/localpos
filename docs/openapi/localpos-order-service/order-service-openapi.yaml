@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: LocalPOS Order Service API
+  version: 1.0.0
+  description: |
+    This API manages orders, payments, inventory, and closures for the LocalPOS system.
+    All endpoints require JWT Bearer authentication.
+
+servers:
+  - url: http://localhost:8084/api/v1
+    description: Base URL for Order Service API
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Orders
+    description: Operations related to order management
+
+paths:
+  /orders:
+    post:
+      tags: [Orders]
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+            example:
+              storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+              userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
+              items:
+                - productId: "7eaba064-6513-4b93-8568-7f1ee49d91a5"
+                  quantity: 2
+              orderType: "SALE"
+              paymentMethod: "CASH"
+      responses:
+        '201':
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              example:
+                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
+                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
+                status: "COMPLETED"
+                totalAmount: 10.00
+                createdAt: "2025-07-23T10:00:00Z"
+                updatedAt: "2025-07-23T10:00:10Z"
+                items:
+                  - id: "121d7877-7700-44a0-aefb-41718b6d90bc"
+                    orderId: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
+                    productId: "7eaba064-6513-4b93-8568-7f1ee49d91a5"
+                    quantity: 2
+                    price: 2.50
+                    total: 5.00
+
+    get:
+      tags: [Orders]
+      summary: List orders by store and optional status
+      parameters:
+        - in: query
+          name: storeId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderSummaryResponse'
+              example:
+                - id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
+                  storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+                  userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
+                  status: "COMPLETED"
+                  totalAmount: 10.00
+                  createdAt: "2025-07-23T10:00:00Z"
+
+  /orders/{orderId}:
+    get:
+      tags: [Orders]
+      summary: Retrieve order by ID
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              example:
+                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
+                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
+                status: "COMPLETED"
+                totalAmount: 10.00
+                createdAt: "2025-07-23T10:00:00Z"
+                updatedAt: "2025-07-23T10:00:10Z"
+                items: []
+
+  /orders/{orderId}/pay:
+    post:
+      tags: [Orders]
+      summary: Pay for an order
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayOrderRequest'
+            example:
+              paymentAmount: 10.00
+              paymentMethod: "CASH"
+      responses:
+        '200':
+          description: Paid order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              example:
+                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
+                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
+                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
+                status: "COMPLETED"
+                totalAmount: 10.00
+                createdAt: "2025-07-23T10:00:00Z"
+                updatedAt: "2025-07-23T10:00:10Z"
+                items: []
+
+  /orders/{orderId}/cancel:
+    post:
+      tags: [Orders]
+      summary: Cancel an order
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Order canceled
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AdjustStockRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+        storeId:
+          type: string
+        amount:
+          type: integer
+      required: [productId, storeId, amount]
+
+    CancelOrderRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+      required: [reason]
+
+    CreateClosureRequest:
+      type: object
+      properties:
+        storeId:
+          type: string
+        userId:
+          type: string
+        closureDate:
+          type: string
+          format: date
+        startDatetime:
+          type: string
+          format: date-time
+        endDatetime:
+          type: string
+          format: date-time
+      required: [storeId, userId, closureDate, startDatetime, endDatetime]
+
+    CreateOrderItemRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+      required: [productId, quantity]
+
+    CreateOrderRequest:
+      type: object
+      properties:
+        storeId:
+          type: string
+        userId:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateOrderItemRequest'
+        orderType:
+          type: string
+        paymentMethod:
+          type: string
+      required: [storeId, userId, items, orderType, paymentMethod]
+
+    PayOrderRequest:
+      type: object
+      properties:
+        paymentAmount:
+          type: number
+          format: decimal
+        paymentMethod:
+          type: string
+      required: [paymentAmount, paymentMethod]
+
+    UpdateStockRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+        storeId:
+          type: string
+        quantity:
+          type: integer
+      required: [productId, storeId, quantity]
+
+    ClosureResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        storeId:
+          type: string
+        userId:
+          type: string
+        closureDate:
+          type: string
+          format: date
+        startDatetime:
+          type: string
+          format: date-time
+        endDatetime:
+          type: string
+          format: date-time
+        totalSales:
+          type: number
+          format: decimal
+        totalCash:
+          type: number
+          format: decimal
+        totalCard:
+          type: number
+          format: decimal
+        totalOther:
+          type: number
+          format: decimal
+        totalOrders:
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    InventoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        productId:
+          type: string
+        storeId:
+          type: string
+        quantity:
+          type: integer
+        status:
+          type: string
+        updatedAt:
+          type: string
+
+    OrderItemResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        orderId:
+          type: string
+        productId:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: decimal
+        total:
+          type: number
+          format: decimal
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        storeId:
+          type: string
+        userId:
+          type: string
+        status:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
+
+    OrderSummaryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        storeId:
+          type: string
+        userId:
+          type: string
+        status:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
