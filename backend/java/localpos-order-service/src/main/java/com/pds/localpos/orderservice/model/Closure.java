@@ -95,4 +95,8 @@ public class Closure {
     @PastOrPresent(message = "{closure.updatedAt.pastOrPresent}")
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Size(max = 36, message = "{closure.updatedBy.size}")
+    @Column(name = "updated_by", length = 36)
+    private String updatedBy;
 }

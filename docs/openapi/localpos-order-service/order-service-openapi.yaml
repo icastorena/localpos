@@ -16,6 +16,8 @@ security:
 tags:
   - name: Orders
     description: Operations related to order management
+  - name: Closures
+    description: Operations related to cash register closures
 
 paths:
   /orders:
@@ -27,7 +29,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderRequest'
+              $ref: "#/components/schemas/CreateOrderRequest"
             example:
               storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
               userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
@@ -37,27 +39,12 @@ paths:
               orderType: "SALE"
               paymentMethod: "CASH"
       responses:
-        '201':
+        "201":
           description: Created order
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
-              example:
-                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
-                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
-                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
-                status: "COMPLETED"
-                totalAmount: 10.00
-                createdAt: "2025-07-23T10:00:00Z"
-                updatedAt: "2025-07-23T10:00:10Z"
-                items:
-                  - id: "121d7877-7700-44a0-aefb-41718b6d90bc"
-                    orderId: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
-                    productId: "7eaba064-6513-4b93-8568-7f1ee49d91a5"
-                    quantity: 2
-                    price: 2.50
-                    total: 5.00
+                $ref: "#/components/schemas/OrderResponse"
 
     get:
       tags: [Orders]
@@ -74,21 +61,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: List of orders
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OrderSummaryResponse'
-              example:
-                - id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
-                  storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
-                  userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
-                  status: "COMPLETED"
-                  totalAmount: 10.00
-                  createdAt: "2025-07-23T10:00:00Z"
+                  $ref: "#/components/schemas/OrderSummaryResponse"
 
   /orders/{orderId}:
     get:
@@ -101,21 +81,12 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Order details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
-              example:
-                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
-                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
-                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
-                status: "COMPLETED"
-                totalAmount: 10.00
-                createdAt: "2025-07-23T10:00:00Z"
-                updatedAt: "2025-07-23T10:00:10Z"
-                items: []
+                $ref: "#/components/schemas/OrderResponse"
 
   /orders/{orderId}/pay:
     post:
@@ -132,26 +103,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PayOrderRequest'
-            example:
-              paymentAmount: 10.00
-              paymentMethod: "CASH"
+              $ref: "#/components/schemas/PayOrderRequest"
       responses:
-        '200':
+        "200":
           description: Paid order
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
-              example:
-                id: "8c138a9c-bb6a-40ca-81ef-2dfde9b03c79"
-                storeId: "1bb3b69f-62d2-4b52-b8c2-8355057e8d60"
-                userId: "b2cb3e13-6b32-4b81-8a37-fc0b37aa5db4"
-                status: "COMPLETED"
-                totalAmount: 10.00
-                createdAt: "2025-07-23T10:00:00Z"
-                updatedAt: "2025-07-23T10:00:10Z"
-                items: []
+                $ref: "#/components/schemas/OrderResponse"
 
   /orders/{orderId}/cancel:
     post:
@@ -164,8 +123,133 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Order canceled
+
+  /closures:
+    get:
+      tags: [Closures]
+      summary: List closures by optional filters
+      parameters:
+        - in: query
+          name: storeId
+          schema:
+            type: string
+        - in: query
+          name: userId
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: List of closures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClosureResponse"
+
+    post:
+      tags: [Closures]
+      summary: Create a new closure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClosureRequest"
+      responses:
+        "201":
+          description: Created closure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosureResponse"
+
+  /closures/{closureId}:
+    get:
+      tags: [Closures]
+      summary: Retrieve closure by ID
+      parameters:
+        - in: path
+          name: closureId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Closure details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosureResponse"
+  
+  /closures/{id}/status:
+    patch:
+      tags: [Closures]
+      summary: Update closure status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClosureStatusRequest"
+            example:
+              status: "CLOSED"
+              updatedBy: "user-uuid"
+      responses:
+        "200":
+          description: Updated closure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClosureResponse"
+  
+  /closures/{id}/finalize:
+    post:
+      tags: [Closures]
+      summary: Finalize closure
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinalizeClosureRequest'
+            example:
+              updatedBy: "user-uuid"
+      responses:
+        '200':
+          description: Finalized closure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClosureResponse'
 
 components:
   securitySchemes:
@@ -230,7 +314,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/CreateOrderItemRequest'
+            $ref: "#/components/schemas/CreateOrderItemRequest"
         orderType:
           type: string
         paymentMethod:
@@ -356,7 +440,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/OrderItemResponse'
+            $ref: "#/components/schemas/OrderItemResponse"
 
     OrderSummaryResponse:
       type: object
@@ -375,3 +459,19 @@ components:
         createdAt:
           type: string
           format: date-time
+
+    UpdateClosureStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        updatedBy:
+          type: string
+      required: [status, updatedBy]
+
+    FinalizeClosureRequest:
+      type: object
+      properties:
+        updatedBy:
+          type: string
+      required: [updatedBy]
