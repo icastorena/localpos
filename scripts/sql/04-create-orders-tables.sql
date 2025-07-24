@@ -53,8 +53,10 @@ CREATE TABLE IF NOT EXISTS orders.closures (
     status           VARCHAR(20) NOT NULL DEFAULT 'OPEN',
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by       VARCHAR(36),
     CONSTRAINT fk_closures_store FOREIGN KEY (store_id) REFERENCES users.stores(id),
     CONSTRAINT fk_closures_user FOREIGN KEY (user_id) REFERENCES users.users(id),
+    CONSTRAINT fk_closures_updated_by FOREIGN KEY (updated_by) REFERENCES users.users(id),
     UNIQUE(store_id, closure_date)
 );
 

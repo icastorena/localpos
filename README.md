@@ -16,12 +16,7 @@ localpos/
 │   │   ├── localpos-inventory-service/
 │   │   └── localpos-reporting-service/
 │   └── kotlin/                       # Kotlin-based microservices
-│       ├── localpos-auth-service-kt/
-│       ├── localpos-user-service-kt/
-│       ├── localpos-product-service-kt/
-│       ├── localpos-order-service-kt/
-│       ├── localpos-inventory-service-kt/
-│       └── localpos-reporting-service-kt/
+│       └── localpos-auth-service-kt/
 │
 ├── frontend/                        # Web and Mobile frontends
 │   ├── localpos-web-app/            
@@ -55,11 +50,11 @@ localpos/
 | Microservice               | Description                              | Java | Kotlin |
 | -------------------------- | ---------------------------------------- | ---- | ------ |
 | localpos-auth-service      | Authentication, JWT token management     | ❌    | ✅      |
-| localpos-user-service      | User, roles, authentication              | ✅    | ✅      |
-| localpos-product-service   | Product catalog, categories, pricing     | ✅    | ✅      |
-| localpos-order-service     | Sales, transactions, and receipts        | ✅    | ✅      |
-| localpos-inventory-service | Stock management, warehouse, adjustments | ✅    | ✅      |
-| localpos-reporting-service | Reports, summaries, analytics            | ✅    | ✅      |
+| localpos-user-service      | User, roles, authentication              | ✅    | 🔜      |
+| localpos-product-service   | Product catalog, categories, pricing     | ✅    | 🔜      |
+| localpos-order-service     | Sales, transactions, and receipts        | ✅    | 🔜      |
+| localpos-inventory-service | Stock management, warehouse, adjustments | ✅    | 🔜      |
+| localpos-reporting-service | Reports, summaries, analytics            | ✅    | 🔜      |
 
 ---
 
@@ -146,16 +141,6 @@ mvn test
 # Kotlin services
 gradle test
 ```
-
----
-
-## 📈 Roadmap
-
-- [x] Java implementation of all services
-- [x] Kotlin mirror implementation (Spring Boot)
-- [ ] Desktop POS client with Tauri
-- [ ] Licensing system and offline activation
-- [ ] Plugin marketplace for extensions
 
 ---
 
