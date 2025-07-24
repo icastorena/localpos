@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="app_name" source="spring.application.name"/>
+    <springProperty scope="local" name="file_total_size_cap" source="logging.file.total-size-cap"/>
+
+    <property name="LOG_FILE" value="logs/${app_name}.log"/>
+    <property name="LOG_FILE_MAX_SIZE" value="24MB"/>
+    <property name="LOG_FILE_MAX_HISTORY" value="7"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%thread] %-40.40logger{39} - correlationId:%X{correlationId:-none} - %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="local">
+        <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_FILE}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+                <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
+                <totalSizeCap>${file_total_size_cap:-256MB}</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%thread] %-40.40logger{39} - correlationId:%X{correlationId:-none} - %msg%n</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+        <!-- Aquí puedes referenciar el appender file solo en este perfil -->
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="logstash"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+
+    <!-- Root para otros perfiles (por defecto) -->
+    <springProfile name="!local">
+        <root level="INFO">
+            <appender-ref ref="console"/>
+            <appender-ref ref="logstash"/>
+        </root>
+    </springProfile>
+
+    <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.json.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
+            <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${file_total_size_cap:-256MB}</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <mdc/>
+                <threadName/>
+                <loggerName/>
+                <logLevel/>
+                <message/>
+                <throwable/>
+                <callerData/>
+            </providers>
+        </encoder>
+    </appender>
+
+</configuration>

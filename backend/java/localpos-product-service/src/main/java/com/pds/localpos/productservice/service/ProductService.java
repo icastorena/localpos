@@ -1,19 +1,21 @@
 package com.pds.localpos.productservice.service;
 
-import com.pds.localpos.productservice.dto.ProductRequestDTO;
-import com.pds.localpos.productservice.dto.ProductResponseDTO;
+import com.pds.localpos.productservice.dto.request.ProductRequest;
+import com.pds.localpos.productservice.dto.response.ProductResponse;
 
 import java.util.List;
 
 public interface ProductService {
 
-    List<ProductResponseDTO> findAll();
+    List<ProductResponse> findAll();
 
-    ProductResponseDTO findById(String id);
+    ProductResponse findById(String id);
 
-    ProductResponseDTO save(ProductRequestDTO productRequest);
+    ProductResponse save(ProductRequest productRequest);
 
-    ProductResponseDTO update(String id, ProductRequestDTO productRequest);
+    ProductResponse update(String id, ProductRequest productRequest);
 
     void delete(String id);
+
+    ProductResponse findByBarcode(String barcode);
 }

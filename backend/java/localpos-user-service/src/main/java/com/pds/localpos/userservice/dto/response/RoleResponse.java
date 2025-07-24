@@ -1,0 +1,8 @@
+package com.pds.localpos.userservice.dto.response;
+
+public record RoleResponse(
+        String id,
+        String name,
+        String description
+) {
+}

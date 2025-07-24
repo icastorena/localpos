@@ -1,8 +1,8 @@
 package com.pds.localpos.orderservice.mapper;
 
-import com.pds.localpos.orderservice.dto.OrderItemResponse;
-import com.pds.localpos.orderservice.dto.OrderResponse;
-import com.pds.localpos.orderservice.dto.OrderSummaryResponse;
+import com.pds.localpos.orderservice.dto.response.OrderItemResponse;
+import com.pds.localpos.orderservice.dto.response.OrderResponse;
+import com.pds.localpos.orderservice.dto.response.OrderSummaryResponse;
 import com.pds.localpos.orderservice.model.Order;
 import com.pds.localpos.orderservice.model.OrderItem;
 import lombok.experimental.UtilityClass;

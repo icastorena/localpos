@@ -8,21 +8,24 @@ info:
     All endpoints require JWT Bearer authentication.
 
 servers:
-  - url: '{base_url}/api/v1'
-    description: Base URL for API requests. Can be overridden in client tools.
-    variables:
-      base_url:
-        default: 'http://localhost:8080'
-        description: Base URL of the Product Service API
+  - url: 'http://localhost:8083/api/v1'
+    description: Base URL for API requests
 
 security:
   - bearerAuth: []
+
+tags:
+  - name: Products
+    description: Product and barcode operations
 
 paths:
   /products:
     get:
       summary: Retrieve all products
       description: Returns a list of all available products.
+      operationId: getAllProducts
+      tags:
+        - Products
       responses:
         '200':
           description: A list of product objects
@@ -31,27 +34,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProductResponseDTO'
+                  $ref: '#/components/schemas/ProductResponse'
       security:
         - bearerAuth: []
 
     post:
       summary: Create a new product
-      description: Creates a product with name, description, price, and category ID.
+      description: Creates a product with name, SKU, barcode, price, and category ID.
+      operationId: createProduct
+      tags:
+        - Products
       requestBody:
         description: Product details to create
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductRequestDTO'
+              $ref: '#/components/schemas/ProductRequest'
       responses:
         '200':
           description: Created product object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductResponseDTO'
+                $ref: '#/components/schemas/ProductResponse'
       security:
         - bearerAuth: []
 
@@ -66,42 +72,77 @@ paths:
     get:
       summary: Retrieve a product by ID
       description: Returns product details for the specified ID.
+      operationId: getProductById
+      tags:
+        - Products
       responses:
         '200':
           description: Product details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductResponseDTO'
+                $ref: '#/components/schemas/ProductResponse'
       security:
         - bearerAuth: []
 
     put:
       summary: Update an existing product
-      description: Updates product name, description, price, or category.
+      description: Updates product name, description, SKU, barcode, price, or category.
+      operationId: updateProduct
+      tags:
+        - Products
       requestBody:
         description: Product details to update
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductRequestDTO'
+              $ref: '#/components/schemas/ProductRequest'
       responses:
         '200':
           description: Updated product object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductResponseDTO'
+                $ref: '#/components/schemas/ProductResponse'
       security:
         - bearerAuth: []
 
     delete:
       summary: Delete a product
       description: Deletes a product by its ID.
+      operationId: deleteProduct
+      tags:
+        - Products
       responses:
         '204':
           description: Product successfully deleted (no content)
+      security:
+        - bearerAuth: []
+
+  /products/barcode/{code}:
+    parameters:
+      - name: code
+        in: path
+        required: true
+        description: Barcode used to identify the product
+        schema:
+          type: string
+    get:
+      summary: Retrieve a product by barcode
+      description: Returns the product details for a given barcode.
+      operationId: getProductByBarcode
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: Product not found
       security:
         - bearerAuth: []
 
@@ -111,9 +152,9 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
   schemas:
-    ProductRequestDTO:
+    ProductRequest:
       type: object
       description: Data required to create or update a product
       properties:
@@ -121,6 +162,14 @@ components:
           type: string
           maxLength: 255
           example: "Coffee"
+        sku:
+          type: string
+          maxLength: 50
+          example: "SKU-COF-001"
+        barcode:
+          type: string
+          maxLength: 20
+          example: "7500000000013"
         description:
           type: string
           maxLength: 1000
@@ -136,10 +185,12 @@ components:
           example: "c9aef7db-5d9e-4a3b-b326-1c3f4d831f8b"
       required:
         - name
+        - sku
+        - barcode
         - price
         - categoryId
 
-    ProductResponseDTO:
+    ProductResponse:
       type: object
       description: Returned product object with full category details
       properties:
@@ -150,6 +201,12 @@ components:
         name:
           type: string
           example: "Coffee"
+        sku:
+          type: string
+          example: "SKU-COF-001"
+        barcode:
+          type: string
+          example: "7500000000013"
         description:
           type: string
           nullable: true
@@ -159,7 +216,7 @@ components:
           format: decimal
           example: 2.50
         category:
-          $ref: '#/components/schemas/CategoryDTO'
+          $ref: '#/components/schemas/CategoryResponse'
         createdAt:
           type: string
           format: date-time
@@ -171,12 +228,14 @@ components:
       required:
         - id
         - name
+        - sku
+        - barcode
         - price
         - category
         - createdAt
         - updatedAt
 
-    CategoryDTO:
+    CategoryResponse:
       type: object
       description: Category details for a product
       properties:

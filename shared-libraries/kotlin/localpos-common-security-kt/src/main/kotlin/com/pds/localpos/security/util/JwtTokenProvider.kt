@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import javax.crypto.SecretKey
 
@@ -53,5 +54,13 @@ class JwtTokenProvider {
 
         @Suppress("UNCHECKED_CAST")
         return claims.get("roles", List::class.java) as List<String>
+    }
+
+    fun getToken(): String? {
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth != null && auth.credentials is String) {
+            return auth.credentials as String?
+        }
+        return null
     }
 }
